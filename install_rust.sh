@@ -6,11 +6,11 @@ fi
 
 
 #update linux install
-yum update -y
+#yum update -y
 
 #install needed libs
-if (-e /usr/bin/yum) {yum install -y glibc.i686 libstdc++.i686 rsync unzip wget}
-if (-e /usr/bin/apt) {apt-get install -y glibc.i686 libstdc++.i686 rsync unzip wget}
+if ( test -f /usr/bin/yum ) ; then yum install -y glibc.i686 libstdc++.i686 rsync unzip wget; fi
+if ( test -f /usr/bin/apt ) ; then apt-get install -y glibc.i686 libstdc++.i686 rsync unzip wget; fi
 
 #download and unpack steamcmd
 curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf -
@@ -41,6 +41,7 @@ wget --output-file=/usr/local/bin/start_rust.sh https://raw.githubusercontent.co
 
 chmod 0755 /usr/local/bin/start_rust.sh
 systemctl daemon-reload
+
 
 echo "Rust installed, Rust service installed, Rust starter script installed"
 echo "Before starting rust with the command"
