@@ -1,0 +1,18 @@
+[Unit]
+Description=Rust Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+#EnvironmentFile=/etc/rust.conf
+Type=simple
+User=rust
+Group=rust
+RestartSec=120s
+ExecStart=/usr/local/bin/start_rust.sh
+Restart=always
+ExecStartPre=/bin/sleep 5
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target
