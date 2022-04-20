@@ -38,8 +38,10 @@ echo created username rust for service
 fi
 
 #change to the user for the rust install (not strictly needed but if you got the disk space why not)
-#install the linux rust server files (vanilla, public branch), anon login, and force to users home/rustserver/ dir (+exit gets out of steamcmd, leave it there)
-sudo -u rust /usr/local/bin/steamcmd.sh +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit
+#install the linux rust server files (vanilla, public branch), anon login, and force to users home/rustserver/ dir 
+#(+exit gets out of steamcmd, leave it there)
+su - rust --command "steamcmd.sh +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit"
+
 
 #will take a few minutes to download
 # the service file will update oxide when run.
