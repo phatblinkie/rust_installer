@@ -1,27 +1,37 @@
 #!/bin/bash
+#replace with your servers ip address
 IP=20.100.100.20
+#this is the port the players will connect to reach your game server
 GAMEPORT=28015
+#this port is used by the rust+ app
 RUSTPLUSPORT=28292
+#this is your rcon port for remote management
 RCONPORT=28016
+#this is the password used for remote management, do not use " in it or this will break
 RCONPASS="testpass"
-#to set the first admin account without having to use rcon first
+#to set the first admin account without having to use rcon first, This is the users steamid
 moderatorid=76561197972406742
 #foldername holding your mods, using a month makes it simple to keep versions separated each month
+#if this does not exist, it will be created at /home/rust/rustserver/server/thisfoldername
+#additionally this will get backed up each time the server is stopped at /home/rust/backups/{datedfolder}/{modfoldername}
 MODFOLDER="march"
 #map stuff
+#dont forget, you set this too big, less people can play on your server, they wont even see it.
 MAPSIZE=4500
+#https://rustmaps.com/  is a great resource for mapsize and seed options
 MAPSEED=621866835
 #change to map url and name if not procedural
 MAPLEVEL="Procedural Map"
+#https://wiki.facepunch.com/rust/server-browser-tags
 TAGS="biweekly,pve"
 #be careful on description punctions, do not use chars that break out of the '' use \n for line breaks
-DESCRIPTION="Tired of getting raided by zergs, or banned for admin abuse? \nErosion PVE helps you out! \n\nWe are a growing and active community where you can come to chill. \nBuild as much as you want and even raid! \n\nOur unique plugin allows players to raid npc bases on a pve server! \n\n- Backpacks \n- BGrade \n- Bots at monuments, PVP Zones, Bots at NPC bases \n- Furnace Splitter \n- Kits \n- NTeleportation \n- Furnace upgrader \n- Remover Tool \n- Server Rewards  \n- Buyable attack Heli \n- Personal Vehicles \n- Increased Stack Sizes \n- Trade \n- Many more "
+DESCRIPTION="Replace this with your own Description, use \n for new lines"
 #used in server browser description
 HEADERIMAGE="https://i.imgur.com/bkBDyUp.png"
 #used in the server website button, most point this to discord join link
 SERVER_URL="https://discord.gg/HWSDzGSCqj"
 #the main hostname of server
-SERVER_HOSTNAME="[US] Erosion PvE - Raidable NPC Bases - Private Raids"
+SERVER_HOSTNAME="phatblinkie is so nice, make him famous and star his repo"
 
 
 
