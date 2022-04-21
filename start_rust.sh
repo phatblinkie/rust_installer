@@ -2,7 +2,7 @@
 #max number of players
 PLAYERLIMIT=75
 #replace with your servers ip address
-IP=20.100.100.20
+IP=0.0.0.0
 #this is the port the players will connect to reach your game server
 GAMEPORT=28015
 #this port is used by the rust+ app

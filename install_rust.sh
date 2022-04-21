@@ -76,7 +76,7 @@ printf "\n################################\nFixing up perms and systemd\n#######
 chmod 0755 /usr/local/bin/start_rust.sh
 systemctl daemon-reload
 
-clear
+echo -e "\n\n\n"
 echo "Rust installed, Rust service installed, Rust starter script installed"
 echo "Before starting rust with the command"
 echo ""
