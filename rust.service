@@ -8,11 +8,13 @@ Wants=network-online.target
 Type=simple
 User=rust
 Group=rust
-RestartSec=120s
+RestartSec=90s
 ExecStart=/usr/local/bin/start_rust.sh
 Restart=always
 ExecStartPre=/bin/sleep 5
 RemainAfterExit=no
+KillMode=control-group
+KillSignal=SIGINT
 
 [Install]
 WantedBy=multi-user.target
