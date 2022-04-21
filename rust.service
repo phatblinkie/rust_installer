@@ -9,9 +9,10 @@ Type=simple
 User=rust
 Group=rust
 RestartSec=90s
+
 ExecStart=/usr/local/bin/start_rust.sh
 Restart=always
-ExecStartPre=/bin/sleep 5
+ExecStartPre=wall "Starting rust server, for status run -- journalctl -f -u rust"
 RemainAfterExit=no
 KillMode=control-group
 KillSignal=SIGINT
