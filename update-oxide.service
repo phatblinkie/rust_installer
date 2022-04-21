@@ -8,8 +8,8 @@ Type=simple
 User=rust
 Group=rust
 ExecStart=/usr/local/bin/update_oxide.sh
-#better its stopped in the updater instead
-#ExecStartPre=systemctl stop rust
+ExecStartPre=+/bin/bash -c "systemctl is-active --quiet rust && wall 'You must stop rust service first' || wall "running oxide updater, you can track progress with the command -- journalctl -f""
+ExecStartPost=+wall "Oxide update completed"
 RemainAfterExit=no
 
 [Install]
