@@ -1,4 +1,8 @@
 #!/bin/bash
+#number of days to keep backups (older than this will be auto deleted to save space)
+DAYS_OF_BACKUPS=10
+#perform a backup of server after it exits? 1=yes 0=no
+PERFORM_BACKUPS=1
 #max number of players
 PLAYERLIMIT=75
 #replace with your servers ip address
@@ -54,6 +58,9 @@ function make_backup()
  mkdir -p ~/backups/ 2>&1 >/dev/null
  rsync -avh --progress server/$MODFOLDER ~/backups/`date  +'%B-%d_%H%M%p'`/
  clear
+ #delete old backups older then X days(first run ensures dir is empty, 2nd deletes empty dirs)
+ find ~/backups/ -type f -mtime +$DAYS_OF_BACKUPS -delete
+ find ~/backups/ -type d -mtime +$DAYS_OF_BACKUPS -delete
 }
 
 function run_rust()
@@ -97,7 +104,10 @@ update_oxide
 
 
 #when this exits, make a backup
+if ($PERFORM_BACKUPS -eq 1)
+then
 make_backup
+fi
 }
 
 #this will update oxide, start the server, and if it exits, make a dated backup of the mod folder
