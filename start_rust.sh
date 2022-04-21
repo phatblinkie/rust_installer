@@ -17,9 +17,9 @@ moderatorid=76561197972406742
 MODFOLDER="march"
 #map stuff
 #dont forget, you set this too big, less people can play on your server, they wont even see it.
-MAPSIZE=4500
+MAPSIZE=1001
 #https://rustmaps.com/  is a great resource for mapsize and seed options
-MAPSEED=621866835
+MAPSEED=469
 #change to map url and name if not procedural
 MAPLEVEL="Procedural Map"
 #https://wiki.facepunch.com/rust/server-browser-tags

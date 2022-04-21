@@ -1,7 +1,8 @@
 #!/bin/bash
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root user"
-  exit
+if [ "${EUID:-$(id -u)}" -ne 0 ]
+then
+	echo "Please run as root"
+	exit
 fi
 
 
@@ -9,33 +10,49 @@ fi
 #yum update -y
 
 #install needed libs
-if ( test -f /usr/bin/yum ) ; then yum install -y glibc.i686 libstdc++.i686 rsync unzip wget; fi
-if ( test -f /usr/bin/apt ) ; then apt-get install -y lib32gcc-s1 rsync unzip wget; fi
+if ( test -f /usr/bin/yum )
+then
+    yum install -y glibc.i686 libstdc++.i686 rsync unzip wget
+    mkdir -p steaminstaller
+    cd steaminstaller
+    #clean up unwanted trash
+    rm -rf /tmp/dumps
+    #download and unpack steamcmd
+    curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf -
+
+    #this updates the steam client
+    ./steamcmd.sh +quit
+
+    #move steamfiles to /usr/local/bin so its in the right spot for users bin
+    mv * /usr/local/bin/
+
+    #clean up unwanted trash
+    rm -rf /tmp/dumps
+    cd ..
+    rm -rf steaminstaller
+fi
+
+if ( test -f /usr/bin/apt ) 
+then 
+  add-apt-repository multiverse
+  dpkg --add-architecture i386
+  apt update
+  apt-get install -y steamcmd  lib32gcc-s1 rsync unzip wget; pkg=apt
+  #this updates the steam client
+  ./steamcmd.sh +quit
+  #clean up unwanted trash
+  rm -rf /tmp/dumps
+fi
 
 
-mkdir -p steaminstaller
-cd steaminstaller
-#clean up unwanted trash
-rm -rf /tmp/dumps
-#download and unpack steamcmd
-curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf -
 
-#this updates the steam client
-./steamcmd.sh +quit
-
-#move steamfiles to /usr/local/bin so its in the right spot for users bin
-mv * /usr/local/bin/
-
-#clean up unwanted trash
-rm -rf /tmp/dumps
-cd ..
-rm -rf steaminstaller
 
 #add the intended user directory
 getent passwd rust > /dev/null
 if [ $? -ne 0 ]; then
-useradd -m rust
-echo created username rust for service
+printf "\n################################\nAdding user: rust\n################################\n\n"
+useradd rust -s /bin/bash -m
+
 fi
 
 #change to the user for the rust install (not strictly needed but if you got the disk space why not)
@@ -43,15 +60,18 @@ fi
 #(+exit gets out of steamcmd, leave it there)
 #clean up unwanted trash from steam
 rm -rf /tmp/dumps
-su - rust --command "steamcmd.sh +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit"
+printf "\n################################\nInstalling steam as user: rust\n################################\n\n"
+su - rust -c "steamcmd.sh +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit"
 
 
 #will take a few minutes to download
 # the service file will update oxide when run.
-
+printf "\n################################\nInstalling Rust service file\n################################\n\n"
 wget --output-document=/usr/lib/systemd/system/rust.service https://raw.githubusercontent.com/phatblinkie/rust_installer/main/rust.service
+printf "\n################################\nInstalling Rust Startup script\n################################\n\n"
 wget --output-document=/usr/local/bin/start_rust.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/main/start_rust.sh
 
+printf "\n################################\nFixing up perms and systemd\n################################\n\n"
 chmod 0755 /usr/local/bin/start_rust.sh
 systemctl daemon-reload
 
