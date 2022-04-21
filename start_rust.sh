@@ -111,4 +111,5 @@ fi
 }
 
 #this will update oxide, start the server, and if it exits, make a dated backup of the mod folder
+wall "Starting rust server, for status run -- journalctl -f -u rust"
 run_rust
