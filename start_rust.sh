@@ -87,11 +87,13 @@ update_oxide
 -nav_disable false \
 -server.encryption 2 \
 -server.tags $TAGS \
--global.moderatorid $MODERATORID \
++global.moderatorid $MODERATORID \
 -server.description "$DESCRIPTION" \
 -server.level "$MAPLEVEL" \
 -server.headerimage "$HEADERIMAGE" \
--server.url "$SERVER_URL"
+-server.url "$SERVER_URL" \
++server.writecfg
+
 
 
 #when this exits, make a backup
