@@ -1,4 +1,11 @@
 #!/bin/bash
+if [ "${EUID:-$(id -u)}" -eq 0 ]
+then
+        echo "Please run as the rust user, not root"
+        #should not happen when run by systemctl, but they may exec manually too
+        exit 1
+fi
+
 #check if rust is running, if so warn and exit
 systemctl is-active --quiet rust && echo -e "\n\nERROR: Rust Service is running\n\nStop this first to avoid corrupting your installation\n\n HINT: systemctl stop rust" && exit 1
 

@@ -14,7 +14,7 @@ This installer will do the following operations
   * updates oxide
   * runs rust command
   * after rust exits (likely from your timed command daily telling rust to stop so it can clear its entity leaks), it will make a -backup of the mod folder from the config
-* install the starter script
+* install the scripts and systemd services to run rust, update oxide, update rust
 * reload systemctl daemon
 * sudo to user rust and install rust for you. 
 
@@ -37,5 +37,15 @@ and you can restart or stop with
 
 to set the service to start up at boot time run the command
 - **systemctl enable rust**
+
+to update oxide manually run the commands
+- **systemctl stop rust**
+then
+- **systemctl start update-oxide**
+
+to update rust manually run the commands
+- **systemctl stop rust**
+then
+- **systemctl start update-rust**
 
 be sure to star the repo, to show your support :) happy rusting
