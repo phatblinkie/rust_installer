@@ -18,9 +18,8 @@ This installer will do the following operations
 * reload systemctl daemon
 * sudo to user rust and install rust for you. 
 
-The service config file is /usr/lib/systemd/system/rust.service
-before you try to start it, you should edit the variables at the top of the start script
-**IMPORTANT --->>>> edit /usr/local/bin/start_rust.sh**
+
+**IMPORTANT --->>>> edit /etc/rust-settings.conf**
 
 after editing this file you can start your server with
 - **systemctl start rust**
