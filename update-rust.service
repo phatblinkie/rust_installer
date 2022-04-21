@@ -8,8 +8,8 @@ Type=simple
 User=rust
 Group=rust
 ExecStart=/usr/local/bin/update_rust.sh
-ExecStartPre=+/bin/bash -c "systemctl is-active --quiet rust && wall 'You must stop rust service first' || wall "running rust updater, you can track progress with the command -- journalctl -f""
-ExecStartPost=+wall "Rust update completed"
+ExecStartPre=+/bin/bash -c "systemctl is-active --quiet rust && wall 'You must stop rust service first' || wall 'running rust updater, you can track progress with the command -- journalctl -f'"
+ExecStartPost=+wall "This can take a few minutes"
 RemainAfterExit=no
 
 [Install]
