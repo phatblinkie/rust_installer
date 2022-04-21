@@ -1,8 +1,8 @@
 #!/bin/bash
 if [ "${EUID:-$(id -u)}" -ne 0 ]
 then
-	echo "Please run as root"
-	exit
+        echo "Please run as root"
+        exit
 fi
 
 
@@ -19,12 +19,12 @@ then
     rm -rf /tmp/dumps
     #download and unpack steamcmd
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf -
-
     #this updates the steam client
     ./steamcmd.sh +quit
 
     #move steamfiles to /usr/local/bin so its in the right spot for users bin
     mv * /usr/local/bin/
+    steamcommand=/usr/local/bin/steamcmd.sh
 
     #clean up unwanted trash
     rm -rf /tmp/dumps
@@ -32,14 +32,15 @@ then
     rm -rf steaminstaller
 fi
 
-if ( test -f /usr/bin/apt ) 
-then 
+if ( test -f /usr/bin/apt )
+then
   add-apt-repository multiverse
   dpkg --add-architecture i386
   apt update
-  apt-get install -y steamcmd  lib32gcc-s1 rsync unzip wget; pkg=apt
+  apt-get install -y steamcmd  lib32gcc-s1 rsync unzip wget
   #this updates the steam client
-  ./steamcmd.sh +quit
+  steamcommand=/usr/games/steamcmd
+  $steamcommand +quit
   #clean up unwanted trash
   rm -rf /tmp/dumps
 fi
@@ -56,12 +57,12 @@ useradd rust -s /bin/bash -m
 fi
 
 #change to the user for the rust install (not strictly needed but if you got the disk space why not)
-#install the linux rust server files (vanilla, public branch), anon login, and force to users home/rustserver/ dir 
+#install the linux rust server files (vanilla, public branch), anon login, and force to users home/rustserver/ dir
 #(+exit gets out of steamcmd, leave it there)
 #clean up unwanted trash from steam
 rm -rf /tmp/dumps
 printf "\n################################\nInstalling steam as user: rust\n################################\n\n"
-su - rust -c "steamcmd.sh +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit"
+su - rust -c "$steamcommand +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit"
 
 
 #will take a few minutes to download
