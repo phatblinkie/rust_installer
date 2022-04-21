@@ -74,6 +74,11 @@ printf "\n################################\nInstalling Rust Startup script\n####
 wget -q --output-document=/usr/local/bin/start_rust.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/main/start_rust.sh
 
 printf "\n################################\nInstalling Rust settings file\n################################\n\n"
+if ( test -f /etc/rust-settings.conf) 
+then
+   mv -f /etc/rust-settings.conf /etc/rust-settings.conf.orig
+   printf "\n################################\nWARNING: Found existing config file, renamed to rust-settings.conf.orig\n################################\n\n"
+fi
 wget -q --output-document=/etc/rust-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/main/rust-settings.conf
 
 printf "\n################################\nInstalling Oxide updater script\n################################\n\n"
