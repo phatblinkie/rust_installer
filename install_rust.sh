@@ -68,22 +68,22 @@ su - rust -c "$steamcommand +force_install_dir ~/rustserver/ +login anonymous +a
 #will take a few minutes to download
 # the service file will update oxide when run.
 printf "\n################################\nInstalling Rust service file\n################################\n\n"
-wget --output-document=/usr/lib/systemd/system/rust.service https://raw.githubusercontent.com/phatblinkie/rust_installer/main/rust.service
+wget -q --output-document=/usr/lib/systemd/system/rust.service https://raw.githubusercontent.com/phatblinkie/rust_installer/main/rust.service
 
 printf "\n################################\nInstalling Rust Startup script\n################################\n\n"
-wget --output-document=/usr/local/bin/start_rust.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/main/start_rust.sh
+wget -q --output-document=/usr/local/bin/start_rust.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/main/start_rust.sh
 
 printf "\n################################\nInstalling Oxide updater script\n################################\n\n"
-wget --output-document=/usr/local/bin/update_oxide.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/main/update_oxide.sh
+wget -q --output-document=/usr/local/bin/update_oxide.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/main/update_oxide.sh
 
 printf "\n################################\nInstalling Oxide updater service\n################################\n\n"
-wget --output-document=/usr/lib/systemd/system/update-oxide.service https://raw.githubusercontent.com/phatblinkie/rust_installer/main/update-oxide.service
+wget -q --output-document=/usr/lib/systemd/system/update-oxide.service https://raw.githubusercontent.com/phatblinkie/rust_installer/main/update-oxide.service
 
 printf "\n################################\nInstalling Rust updater script\n################################\n\n"
-wget --output-document=/usr/local/bin/update_rust.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/main/update_rust.sh
+wget -q --output-document=/usr/local/bin/update_rust.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/main/update_rust.sh
 
 printf "\n################################\nInstalling Rust updater service\n################################\n\n"
-wget --output-document=/usr/lib/systemd/system/update-rust.service https://raw.githubusercontent.com/phatblinkie/rust_installer/main/update-rust.service
+wget -q --output-document=/usr/lib/systemd/system/update-rust.service https://raw.githubusercontent.com/phatblinkie/rust_installer/main/update-rust.service
 
 
 
