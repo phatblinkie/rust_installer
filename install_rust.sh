@@ -73,6 +73,9 @@ wget -q --output-document=/usr/lib/systemd/system/rust.service https://raw.githu
 printf "\n################################\nInstalling Rust Startup script\n################################\n\n"
 wget -q --output-document=/usr/local/bin/start_rust.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/main/start_rust.sh
 
+printf "\n################################\nInstalling Rust settings file\n################################\n\n"
+wget -q --output-document=/etc/rust-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/main/rust-settings.conf
+
 printf "\n################################\nInstalling Oxide updater script\n################################\n\n"
 wget -q --output-document=/usr/local/bin/update_oxide.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/main/update_oxide.sh
 
@@ -89,12 +92,11 @@ wget -q --output-document=/usr/lib/systemd/system/update-rust.service https://ra
 
 printf "\n################################\nFixing up perms and systemd\n################################\n\n"
 chmod 0755 /usr/local/bin/start_rust.sh /usr/local/bin/update_oxide.sh /usr/local/bin/update_rust.sh
+chmod 0644 /etc/rust-settings.conf
 systemctl daemon-reload
 
-echo -e "\n\n\n"
+printf "\n################################\nInstaller complete\n################################\n\n"
 echo "Rust installed, Rust service installed, Rust starter script installed"
-echo "Before starting rust with the command"
 echo ""
-echo "systemctl start rust"
-echo ""
-echo "you edit and set the variables up in the top of the file /usr/local/bin/start_rust.sh"
+echo "you should now edit the variables up in the file /etc/rust-settings.conf"
+echo "then you can start rust with -- systemctl start rust"

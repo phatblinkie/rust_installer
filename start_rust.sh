@@ -1,45 +1,5 @@
 #!/bin/bash
-#number of days to keep backups (older than this will be auto deleted to save space)
-DAYS_OF_BACKUPS=10
-#perform a backup of server after it exits? 1=yes 0=no
-PERFORM_BACKUPS=1
-#max number of players
-PLAYERLIMIT=75
-#replace with your servers ip address
-IP=0.0.0.0
-#this is the port the players will connect to reach your game server
-GAMEPORT=28015
-#this port is used by the rust+ app
-RUSTPLUSPORT=28292
-#this is your rcon port for remote management
-RCONPORT=28016
-#this is the password used for remote management, only numbers and letters no spaces
-RCONPASS=testpass
-#to set the first admin account without having to use rcon first, This is the users steamid
-MODERATORID=76561197972406742
-#foldername holding your mods, using a month makes it simple to keep versions separated each month
-#if this does not exist, it will be created at /home/rust/rustserver/server/thisfoldername
-#additionally this will get backed up each time the server is stopped at /home/rust/backups/{datedfolder}/{modfoldername}
-MODFOLDER=march
-#map stuff
-#dont forget, you set this too big, less people can play on your server, they wont even see it.
-MAPSIZE=1001
-#https://rustmaps.com/  is a great resource for mapsize and seed options
-MAPSEED=469
-#change to map url and name if not procedural
-MAPLEVEL="Procedural Map"
-#https://wiki.facepunch.com/rust/server-browser-tags
-TAGS=biweekly,pve
-#be careful on description punctions, do not use chars that break out of the '' use \n for line breaks
-DESCRIPTION="Replace this with your own Description, use \n for new lines"
-#used in server browser description
-HEADERIMAGE="https://i.imgur.com/bkBDyUp.png"
-#used in the server website button, most point this to discord join link
-SERVER_URL="https://discord.gg/HWSDzGSCqj"
-#the main hostname of server
-SERVER_HOSTNAME="phatblinkie is so nice, make him famous"
-
-
+. /etc/rust-settings.conf
 
 
 
