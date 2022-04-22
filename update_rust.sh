@@ -15,9 +15,6 @@ systemctl is-active --quiet rust && echo -e "\n\nERROR: Rust Service is running\
 if [ -f /usr/local/bin/steamcmd.sh ]
 then
     /usr/local/bin/steamcmd.sh +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit
-elif [ -f /usr/games/steamcmd ]
-then
-    /usr/games/steamcmd +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit
 else
     echo "ERROR: unable to find steamcmd at /usr/local/bin/steamcmd.sh or /usr/games/steamcmd"
     exit 1

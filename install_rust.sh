@@ -5,12 +5,8 @@ then
         exit
 fi
 
-
-
-#install needed libs
-if [ -f /usr/bin/yum ]
-then
-    yum install -y glibc.i686 libstdc++.i686 rsync unzip wget
+function install_steam () 
+{
     mkdir -p steaminstaller
     cd steaminstaller
     #clean up unwanted trash
@@ -18,16 +14,22 @@ then
     #download and unpack steamcmd
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf -
     #this updates the steam client
-    ./steamcmd.sh +quit
+    /usr/local/bin/steamcmd.sh +quit
 
     #move steamfiles to /usr/local/bin so its in the right spot for users bin
     mv * /usr/local/bin/
-    steamcommand=/usr/local/bin/steamcmd.sh
 
     #clean up unwanted trash
     rm -rf /tmp/dumps
     cd ..
     rm -rf steaminstaller
+}
+
+#install needed libs
+if [ -f /usr/bin/yum ]
+then
+    yum install -y glibc.i686 libstdc++.i686 rsync unzip wget
+    install_steam
 fi
 
 if [ -f /usr/bin/apt ]
@@ -35,12 +37,8 @@ then
   add-apt-repository multiverse
   dpkg --add-architecture i386
   apt update
-  apt-get install -y steamcmd  lib32gcc-s1 rsync unzip wget
-  #this updates the steam client
-  steamcommand=/usr/games/steamcmd
-  $steamcommand +quit
-  #clean up unwanted trash
-  rm -rf /tmp/dumps
+  apt-get install -y lib32gcc-s1 rsync unzip wget
+  install_steam
 fi
 
 
@@ -60,7 +58,7 @@ fi
 #clean up unwanted trash from steam
 rm -rf /tmp/dumps
 printf "\n################################\nInstalling steam as user: rust\n################################\n\n"
-su - rust -c "$steamcommand +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit"
+su - rust -c "/usr/local/bin/steamcmd.sh +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit"
 
 
 #will take a few minutes to download
