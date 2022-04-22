@@ -12,18 +12,15 @@ systemctl is-active --quiet rust && echo -e "\n\nERROR: Rust Service is running\
 
 #ok not running, now to update. for the ubuntu installs, they use the repository package, and have a different path to the binaries
 #depending which we find, use it instead of guessing the path
-if (test -f /usr/local/bin/steamcmd.sh)
+if [ -f /usr/local/bin/steamcmd.sh ]
 then
-    wall "running rust updater, you can track progress with the command -- journalctl -f"
     /usr/local/bin/steamcmd.sh +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit
-elif (test -f /usr/games/steamcmd)
+elif [ -f /usr/games/steamcmd ]
 then
-    wall "running rust updater, you can track progress with the command -- journalctl -f"
     /usr/games/steamcmd +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit
 else
     echo "ERROR: unable to find steamcmd at /usr/local/bin/steamcmd.sh or /usr/games/steamcmd"
     exit 1
 fi
 echo "Game has been updated successfully"
-wall "Game has been updated successfully"
 exit 0
