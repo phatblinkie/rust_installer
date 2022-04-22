@@ -14,7 +14,7 @@ function install_steam ()
     #download and unpack steamcmd
     curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf -
     #this updates the steam client
-    /usr/local/bin/steamcmd.sh +quit
+    ./steamcmd.sh +quit
 
     #move steamfiles to /usr/local/bin so its in the right spot for users bin
     mv * /usr/local/bin/
