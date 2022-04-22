@@ -18,6 +18,8 @@ function install_steam ()
 
     #move steamfiles to /usr/local/bin so its in the right spot for users bin
     mv * /usr/local/bin/
+    chmod 0755 /usr/local/bin/linux32/steamcmd /usr/local/bin/steamcmd.sh
+
 
     #clean up unwanted trash
     rm -rf /tmp/dumps
