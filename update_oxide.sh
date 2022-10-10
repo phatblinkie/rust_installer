@@ -14,7 +14,7 @@ echo "Updating Oxide"
 wall "Updating Oxide"
 cd ~/rustserver/
 rm -f oxide.zip
-wget -O oxide.zip https://umod.org/games/rust/download/develop
+wget -O oxide.zip https://github.com/OxideMod/Oxide.Rust/releases/latest/download/Oxide.Rust-linux.zip
 unzip -o oxide.zip
 echo "Oxide update completed"
 wall "Oxide update completed"
