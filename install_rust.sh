@@ -33,9 +33,7 @@ function install_steam ()
 if [ -f /usr/bin/yum ]
 then
     yum install -y rsync unzip wget
-    PLATFORM=linux32
-    export LD_LIBRARY_PATH=/usr/local/bin/linux32:
-    LD_LIBRARY_PATH=/usr/local/bin/linux32:
+    yum update -y libstdc++
     yum install -y glibc.i686 libstdc++.i686 
     install_steam
 fi
