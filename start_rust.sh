@@ -3,7 +3,7 @@
 
 function update_oxide()
 {
-cd ~/rustserver/
+cd ~/foxxprod/
 rm -f oxide.zip
 wget -O oxide.zip https://umod.org/games/rust/download/develop
 unzip -o oxide.zip
@@ -12,9 +12,9 @@ unzip -o oxide.zip
 function make_backup()
 {
 #make backup of the moded dir, no need for backup of anything else really
- cd ~/rustserver/
+ cd ~/foxxprod/
  mkdir -p ~/backups/ 2>&1 >/dev/null
- rsync -avh --progress server/$MODFOLDER ~/backups/`date  +'%B-%d_%H%M%p'`/
+ rsync -avh --progress oxide server/$MODFOLDER ~/backups/`date  +'%B-%d_%H%M%p'`/
  clear
  #delete old backups older then X days(first run ensures dir is empty, 2nd deletes empty dirs)
  find ~/backups/ -type f -mtime +$DAYS_OF_BACKUPS -delete
@@ -23,7 +23,7 @@ function make_backup()
 
 function run_rust()
 {
-cd ~/rustserver/
+cd ~/foxxprod/
 
 
 
@@ -31,32 +31,49 @@ echo starting rust server
 #update oxide each startup
 update_oxide
 
+echo -e "$SERVERAUTO_CFG" > ~/foxxprod/server/jan1/cfg/server.cfg
+echo -e "$USERS_CFG" > ~/foxxprod/server/jan1/cfg/users.cfg
 #$CMDTORUN $RUSTCMD
 ./RustDedicated -batchmode -nographics \
--server.ip $IP \
--server.port $GAMEPORT \
--rcon.ip $IP \
--rcon.port $RCONPORT \
--rcon.password $RCONPASS \
--server.maxplayers $PLAYERLIMIT \
--server.hostname "$SERVER_HOSTNAME" \
--server.identity $MODFOLDER \
--server.worldsize $MAPSIZE \
--server.seed $MAPSEED \
--server.saveinterval 180 \
--app.port $RUSTPLUSPORT \
--server.secure true \
--decay.scale 0.2 \
--xmas.enabled 1 \
--decay.upkeep true \
--nav_disable false \
--server.encryption 2 \
--server.tags $TAGS \
-+global.moderatorid $MODERATORID \
--server.description "$DESCRIPTION" \
--server.level "$MAPLEVEL" \
--server.headerimage "$HEADERIMAGE" \
--server.url "$SERVER_URL" \
++server.ip "$IP" \
++server.port "$GAMEPORT" \
++server.queryport "$QUERYPORT" \
++rcon.ip "$IP" \
++rcon.port "$RCONPORT" \
++rcon.password "$RCONPASS" \
++server.maxplayers "$PLAYERLIMIT" \
++server.hostname "$SERVER_HOSTNAME" \
++server.identity "$MODFOLDER" \
++server.worldsize "$MAPSIZE" \
++server.seed "$MAPSEED" \
++server.saveinterval 180 \
++app.port "$RUSTPLUSPORT" \
++app.listenip "$IP" \
++app.publicip "$IP" \
++server.secure "true" \
++server.tickrate "30" \
++fps.limit "100" \
++server.pve "false" \
++chat.enabled "True" \
++chat.globalchat "True" \
++server.idlekickmode "1" \
++server.idlekick "0" \
++server.idlekickadmins "0" \
++decay.scale "0.2" \
++xmas.enabled "0" \
++decay.upkeep "true" \
++nav_disable "false" \
++server.encryption "2" \
++server.tags "$TAGS" \
++global.moderatorid "$MODERATORID" \
++global.ownerid "$OWNERID" \
++server.description "$DESCRIPTION" \
++server.level "$MAPLEVEL" \
++server.headerimage "$HEADERIMAGE" \
++server.url "$SERVER_URL" \
++server.levelurl "$SERVER_LEVELURL" \
++server.gamemode "$SERVER_GAMEMODE" \
++server.motd "$SERVER_MOTD" \
 +server.writecfg
 
 
