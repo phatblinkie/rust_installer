@@ -3,7 +3,7 @@
 
 function update_oxide()
 {
-cd ~/foxxprod/
+cd ~/rustserver/
 rm -f oxide.zip
 wget -O oxide.zip https://umod.org/games/rust/download/develop
 unzip -o oxide.zip
@@ -12,7 +12,7 @@ unzip -o oxide.zip
 function make_backup()
 {
 #make backup of the moded dir, no need for backup of anything else really
- cd ~/foxxprod/
+ cd ~/rustserver/
  mkdir -p ~/backups/ 2>&1 >/dev/null
  rsync -avh --progress server ~/backups/`date  +'%B-%d_%H%M%p'`/
  rsync -avh --progress oxide ~/backups/`date  +'%B-%d_%H%M%p'`/
@@ -24,17 +24,17 @@ function make_backup()
 
 function run_rust()
 {
-mkdir -p ~/foxxprod 2>&1 >/dev/null
-cd ~/foxxprod/
+mkdir -p ~/rustserver 2>&1 >/dev/null
+cd ~/rustserver/
 
 
 
 echo starting rust server
 #update oxide each startup
 update_oxide
-mkdir -p ~/foxxprod/server/jan1/cfg
-echo -e "$SERVERAUTO_CFG" > ~/foxxprod/server/jan1/cfg/server.cfg
-echo -e "$USERS_CFG" > ~/foxxprod/server/jan1/cfg/users.cfg
+mkdir -p ~/rustserver/server/jan1/cfg
+echo -e "$SERVERAUTO_CFG" > ~/rustserver/server/jan1/cfg/server.cfg
+echo -e "$USERS_CFG" > ~/rustserver/server/jan1/cfg/users.cfg
 #$CMDTORUN $RUSTCMD
 ./RustDedicated -batchmode -nographics \
 +server.ip "$IP" \

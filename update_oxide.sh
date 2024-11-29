@@ -12,7 +12,7 @@ systemctl is-active --quiet rust && echo -e "\n\nERROR: Rust Service is running\
 
 echo "Updating Oxide"
 wall "Updating Oxide"
-cd ~/foxxprod/
+cd ~/rustserver/
 rm -f oxide.zip
 wget -O oxide.zip https://github.com/OxideMod/Oxide.Rust/releases/latest/download/Oxide.Rust-linux.zip
 unzip -o oxide.zip

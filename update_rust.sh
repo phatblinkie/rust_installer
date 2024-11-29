@@ -14,11 +14,11 @@ systemctl is-active --quiet rust && echo -e "\n\nERROR: Rust Service is running\
 #depending which we find, use it instead of guessing the path
 if [ -f /usr/local/bin/steamcmd.sh ]
 then
-    /usr/local/bin/steamcmd.sh +force_install_dir ~/foxxprod/ +login anonymous +app_update 258550 validate +exit
+    /usr/local/bin/steamcmd.sh +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit
 # were gonna do it about 4 times, steamcmd is a pita about not exiting properly, this usually is enough
-   /usr/local/bin/steamcmd.sh +force_install_dir ~/foxxprod/ +login anonymous +app_update 258550 validate +exit
-   /usr/local/bin/steamcmd.sh +force_install_dir ~/foxxprod/ +login anonymous +app_update 258550 validate +exit
-   /usr/local/bin/steamcmd.sh +force_install_dir ~/foxxprod/ +login anonymous +app_update 258550 validate +exit
+   /usr/local/bin/steamcmd.sh +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit
+   /usr/local/bin/steamcmd.sh +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit
+   /usr/local/bin/steamcmd.sh +force_install_dir ~/rustserver/ +login anonymous +app_update 258550 validate +exit
 
     if [ ! -L /home/rust/.steam/sdk64/steamclient.so ]
     then
