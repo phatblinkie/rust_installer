@@ -24,6 +24,7 @@ function make_backup()
 
 function run_rust()
 {
+mkdir -p ~/foxxprod 2>&1 >/dev/null
 cd ~/foxxprod/
 
 
@@ -31,7 +32,7 @@ cd ~/foxxprod/
 echo starting rust server
 #update oxide each startup
 update_oxide
-omkdir -p ~/foxxprod/server/jan1/cfg
+mkdir -p ~/foxxprod/server/jan1/cfg
 echo -e "$SERVERAUTO_CFG" > ~/foxxprod/server/jan1/cfg/server.cfg
 echo -e "$USERS_CFG" > ~/foxxprod/server/jan1/cfg/users.cfg
 #$CMDTORUN $RUSTCMD
