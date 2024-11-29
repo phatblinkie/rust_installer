@@ -102,8 +102,17 @@ chmod 0755 /usr/local/bin/start_rust.sh /usr/local/bin/update_oxide.sh /usr/loca
 chmod 0644 /etc/rust-settings.conf
 systemctl daemon-reload
 
+printf "\n################################\nenabling rust service to start on boot\n################################\n\n"
+systemctl enable rust
+
+
 printf "\n################################\nInstaller complete\n################################\n\n"
 echo "Rust installed, Rust service installed, Rust starter script installed"
 echo ""
 echo "you should now edit the variables up in the file /etc/rust-settings.conf"
 echo "then you can start rust with -- systemctl start rust"
+echo "then you can stop rust with -- systemctl stop rust"
+echo "then you can update rust or oxide with -- systemctl start update-rust or systemctl start update-oxide"
+
+echo "to see logs from the server you can run -- journalctl -f -u rust"
+
