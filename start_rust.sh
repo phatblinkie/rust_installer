@@ -14,11 +14,12 @@ function make_backup()
 #make backup of the moded dir, no need for backup of anything else really
  cd ~/foxxprod/
  mkdir -p ~/backups/ 2>&1 >/dev/null
- rsync -avh --progress oxide server/$MODFOLDER ~/backups/`date  +'%B-%d_%H%M%p'`/
+ rsync -avh --progress server ~/backups/`date  +'%B-%d_%H%M%p'`/
+ rsync -avh --progress oxide ~/backups/`date  +'%B-%d_%H%M%p'`/
  clear
  #delete old backups older then X days(first run ensures dir is empty, 2nd deletes empty dirs)
- find ~/backups/ -type f -mtime +$DAYS_OF_BACKUPS -delete
- find ~/backups/ -type d -mtime +$DAYS_OF_BACKUPS -delete
+# find ~/backups/ -type f -mtime +$DAYS_OF_BACKUPS -delete
+# find ~/backups/ -type d -mtime +$DAYS_OF_BACKUPS -delete
 }
 
 function run_rust()
@@ -30,7 +31,7 @@ cd ~/foxxprod/
 echo starting rust server
 #update oxide each startup
 update_oxide
-
+omkdir -p ~/foxxprod/server/jan1/cfg
 echo -e "$SERVERAUTO_CFG" > ~/foxxprod/server/jan1/cfg/server.cfg
 echo -e "$USERS_CFG" > ~/foxxprod/server/jan1/cfg/users.cfg
 #$CMDTORUN $RUSTCMD
@@ -71,11 +72,12 @@ echo -e "$USERS_CFG" > ~/foxxprod/server/jan1/cfg/users.cfg
 +server.level "$MAPLEVEL" \
 +server.headerimage "$HEADERIMAGE" \
 +server.url "$SERVER_URL" \
-+server.levelurl "$SERVER_LEVELURL" \
 +server.gamemode "$SERVER_GAMEMODE" \
 +server.motd "$SERVER_MOTD" \
++server.levelurl "$SERVER_LEVELURL" \
 +server.writecfg
 
+#+server.levelurl "$SERVER_LEVELURL" \
 
 
 #when this exits, make a backup
