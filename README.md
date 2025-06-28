@@ -3,7 +3,7 @@ simple tool to create a rust server on linux, centos or ubuntu.
 
 To install, become root user in your linux os, centos or ubuntu should both work
 
-run the following command as root
+run the following command as a normal user (if elevated commands are needed, it will ask for your sudo pw)
 
 wget -q -O - https://raw.githubusercontent.com/phatblinkie/rust_installer/main/install_rust.sh | bash
 
