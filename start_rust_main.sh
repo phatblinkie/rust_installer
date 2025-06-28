@@ -1,4 +1,5 @@
 #!/bin/bash
+cd ~/rust_main/
 . rust-main-settings.conf
 
 function update_oxide()

@@ -1,4 +1,5 @@
 #!/bin/bash
+cd ~/rust_staging/
 . rust-staging-settings.conf
 
 function update_oxide()

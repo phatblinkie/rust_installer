@@ -165,6 +165,8 @@ function install_rust() {
 	wget -q -O ~/.config/systemd/user/rust-main.service https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/rust-main.service
 	wget -q -O ~/rust_main/rust-main-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/rust-main-settings.conf
 	wget -q -O ~/rust_main/start_rust_main.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/start_rust_main.sh
+	sed -i "s/USERNAME/$USER/" ~/.config/systemd/user/rust-main.service
+	chmod 0755  ~/rust_main/start_rust_main.sh
 	#reload daemon
 	systemctl --user daemon-reload
 	#enable linger mode
@@ -185,6 +187,8 @@ function install_rust_staging() {
         wget -q -O ~/.config/systemd/user/rust-staging.service https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/rust-staging.service
         wget -q -O ~/rust_staging/rust-main-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/rust-staging-settings.conf
 	wget -q -O ~/rust_main/start_rust_staging.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/start_rust_staging.sh
+	sed -i "s/USERNAME/$USER/" ~/.config/systemd/user/rust-staging.service
+	chmod 0755 ~/rust_main/start_rust_staging.sh
 	#reload daemon
         systemctl --user daemon-reload
         #enable linger mode
