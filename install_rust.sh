@@ -11,14 +11,12 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-
 function install_steam() {
-
     echo -e "\nInstalling SteamCMD\n"
     if [ -d Steam ]
     then
-	    echo -e "Detected existing steam install, removing...\n"
-	    rm -rf Steam
+        echo -e "Detected existing steam install, removing...\n"
+        rm -rf Steam
     fi
     mkdir -p Steam
     cd Steam
@@ -32,28 +30,24 @@ function install_steam() {
     #move steamfiles to /usr/local/bin so its in the right spot for users bin
     chmod 0755 linux32/* steamcmd.sh
 
-
     #clean up unwanted trash
     rm -rf /tmp/dumps
     cd $OLDPWD
-    #rm -rf steaminstaller
 }
 
 function install_requirements() {
-   echo -e "\n Installing pre-requisates\n"
-   get_sudo_password
-   if [ -f /usr/bin/apt ]
-   then
-     run_with_sudo add-apt-repository multiverse
-     run_with_sudo dpkg --add-architecture i386
-     run_with_sudo apt update
-     run_with_sudo apt-get install -y lib32gcc-s1 rsync unzip wget
-   else
-     echo -e "\nERROR: unable to find 'apt' wrong os?\n"
-   fi
+    echo -e "\n Installing pre-requisites\n"
+    get_sudo_password
+    if [ -f /usr/bin/apt ]
+    then
+        run_with_sudo add-apt-repository multiverse
+        run_with_sudo dpkg --add-architecture i386
+        run_with_sudo apt update
+        run_with_sudo apt-get install -y lib32gcc-s1 rsync unzip wget
+    else
+        echo -e "\nERROR: unable to find 'apt' wrong os?\n"
+    fi
 }
-
-# ---------- Improved Sudo Password Handling ----------
 
 function get_sudo_password() {
     # Clear any existing sudo credentials
@@ -67,7 +61,7 @@ function get_sudo_password() {
     # Loop until we get a valid sudo password
     while true; do
         echo "Please enter your sudo password to proceed:"
-        read -r -s SUDO_PASSWORD
+        read -r -s SUDO_PASSWORD < /dev/tty
 
         # Verify the password works by trying to list root directory
         echo
@@ -113,7 +107,6 @@ function configure_firewall() {
         ["Loki"]="9009/tcp"
     )
 
-
     for service in "${!PORTS[@]}"; do
         port=${PORTS[$service]}
         if ! run_with_sudo firewall-cmd --query-port="$port" | grep -q "yes"; then
@@ -124,8 +117,7 @@ function configure_firewall() {
     done
 
     echo "Adding NFS service"
-    run_with_sudo firewall-cmd --permanent --now --add-service="nfs"
-
+    run_with_sudo firewall-cmd --permanent --add-service="nfs"
 
     echo "Reloading firewalld..."
     run_with_sudo firewall-cmd --reload
@@ -133,7 +125,6 @@ function configure_firewall() {
 
     echo "Firewall configuration completed successfully!"
 }
-
 
 function check_permission() {
     local file="$1"
@@ -157,96 +148,93 @@ function check_success() {
 }
 
 function install_rust() {
-	echo -e "\nInstalling or updating Rust - main branch\n"
-	./Steam/steamcmd.sh +force_install_dir ~/rust_main/ +login anonymous +app_update 258550 validate +exit
+    echo -e "\nInstalling or updating Rust - main branch\n"
+    ./Steam/steamcmd.sh +force_install_dir ~/rust_main/ +login anonymous +app_update 258550 validate +exit
 
-	#create the systemd files for the user, reload the daemon
-	mkdir -p ~/.config/systemd/user 2>/dev/null
-	wget -q -O ~/.config/systemd/user/rust-main.service https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/servicefiles/rust-main.service
-	if [ -f ~/rust_main/rust-main-settings.conf ]
-	then
-		echo "Found existing configuration file, skipping overwrite"
-	else
-	wget -q -O ~/rust_main/rust-main-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/configs/rust-main-settings.conf
-	fi
+    #create the systemd files for the user, reload the daemon
+    mkdir -p ~/.config/systemd/user 2>/dev/null
+    wget -q -O ~/.config/systemd/user/rust-main.service https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/servicefiles/rust-main.service
+    if [ -f ~/rust_main/rust-main-settings.conf ]
+    then
+        echo "Found existing configuration file, skipping overwrite"
+    else
+        wget -q -O ~/rust_main/rust-main-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/configs/rust-main-settings.conf
+    fi
 
-	wget -q -O ~/rust_main/start_rust_main.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/bin/start_rust_main.sh
-	sed -i "s/USERNAME/$USER/" ~/.config/systemd/user/rust-main.service
-	chmod 0755  ~/rust_main/start_rust_main.sh
-	#reload daemon
-	systemctl --user daemon-reload
-	#enable linger mode
-	loginctl enable-linger
+    wget -q -O ~/rust_main/start_rust_main.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/bin/start_rust_main.sh
+    sed -i "s/USERNAME/$USER/" ~/.config/systemd/user/rust-main.service
+    chmod 0755  ~/rust_main/start_rust_main.sh
+    #reload daemon
+    systemctl --user daemon-reload
+    #enable linger mode
+    loginctl enable-linger
 
-	echo -e "\n You can manage the service with the following commands\n"
-	echo -e "systemctl --user start|status|stop rust-main"
-	echo
-	echo -e "To see logs in real time, use journalctl -f -u rust-main"
+    echo -e "\n You can manage the service with the following commands\n"
+    echo -e "systemctl --user start|status|stop rust-main"
+    echo
+    echo -e "To see logs in real time, use journalctl -f -u rust-main"
 }
 
 function install_rust_staging() {
-        echo -e "\nInstalling or updating Rust - STAGING branch\n"
-        ./Steam/steamcmd.sh +force_install_dir ~/rust_staging/ +login anonymous +app_update 258550 -beta staging validate +exit
+    echo -e "\nInstalling or updating Rust - STAGING branch\n"
+    ./Steam/steamcmd.sh +force_install_dir ~/rust_staging/ +login anonymous +app_update 258550 -beta staging validate +exit
 
-	#create the systemd files for the user, reload the daemon
-	mkdir -p ~/.config/systemd/user 2>/dev/null
-        wget -q -O ~/.config/systemd/user/rust-staging.service https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/servicefiles/rust-staging.service
-        if [ -f ~/rust_staging/rust-staging-settings.conf ]
-        then
-                echo "Found existing configuration file, skipping overwrite"
-        else
-		wget -q -O ~/rust_staging/rust-main-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/configs/rust-staging-settings.conf
+    #create the systemd files for the user, reload the daemon
+    mkdir -p ~/.config/systemd/user 2>/dev/null
+    wget -q -O ~/.config/systemd/user/rust-staging.service https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/servicefiles/rust-staging.service
+    if [ -f ~/rust_staging/rust-staging-settings.conf ]
+    then
+        echo "Found existing configuration file, skipping overwrite"
+    else
+        wget -q -O ~/rust_staging/rust-staging-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/configs/rust-staging-settings.conf
+    fi
 
-	fi
+    wget -q -O ~/rust_staging/start_rust_staging.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/bin/start_rust_staging.sh
+    sed -i "s/USERNAME/$USER/" ~/.config/systemd/user/rust-staging.service
+    chmod 0755 ~/rust_staging/start_rust_staging.sh
+    #reload daemon
+    systemctl --user daemon-reload
+    #enable linger mode
+    loginctl enable-linger
 
-	wget -q -O ~/rust_main/start_rust_staging.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/bin/start_rust_staging.sh
-	sed -i "s/USERNAME/$USER/" ~/.config/systemd/user/rust-staging.service
-	chmod 0755 ~/rust_main/start_rust_staging.sh
-	#reload daemon
-        systemctl --user daemon-reload
-        #enable linger mode
-        loginctl enable-linger
-
-        echo -e "\n You can manage the service with the following commands\n"
-        echo -e "systemctl --user start|status|stop rust-staging"
-        echo
-        echo -e "To see logs in real time, use journalctl -f -u rust-staging"
-
+    echo -e "\n You can manage the service with the following commands\n"
+    echo -e "systemctl --user start|status|stop rust-staging"
+    echo
+    echo -e "To see logs in real time, use journalctl -f -u rust-staging"
 }
 
 function install_oxide() {
-	#check if rust is running, if so warn and exit
-	systemctl --user is-active --quiet rust && echo -e "\n\nERROR: Rust Service is running\n\nStop this first to avoid corrupting your installation\n\n HINT: systemctl stop rust" && return 1
+    #check if rust is running, if so warn and exit
+    systemctl --user is-active --quiet rust-main && echo -e "\n\nERROR: Rust Service is running\n\nStop this first to avoid corrupting your installation\n\n HINT: systemctl stop rust-main" && return 1
 
-	echo -e \n"Updating Oxide\n"
-	cd ~/rust_main/
-	rm -f oxide.zip
-	wget -O oxide.zip https://github.com/OxideMod/Oxide.Rust/releases/latest/download/Oxide.Rust-linux.zip
-	unzip -o oxide.zip
-	echo "Oxide update completed"
-	cd $OLDPWD
+    echo -e "\nUpdating Oxide\n"
+    cd ~/rust_main/
+    rm -f oxide.zip
+    wget -O oxide.zip https://github.com/OxideMod/Oxide.Rust/releases/latest/download/Oxide.Rust-linux.zip
+    unzip -o oxide.zip
+    echo "Oxide update completed"
+    cd $OLDPWD
 }
 
 function install_oxide_staging() {
-	#check if rust is running, if so warn and exit
-	systemctl --user is-active --quiet rust-staging && echo -e "\n\nERROR: Rust Service is running\n\nStop this first to avoid corrupting your installation\n\n HINT: systemctl stop rust" && return 1
+    #check if rust is running, if so warn and exit
+    systemctl --user is-active --quiet rust-staging && echo -e "\n\nERROR: Rust Service is running\n\nStop this first to avoid corrupting your installation\n\n HINT: systemctl stop rust-staging" && return 1
 
-	echo -e \n"Updating STAGING Oxide\n"
-	cd ~/rust_staging/
-	rm -f oxide.zip
-	wget -O oxide.zip https://downloads.oxidemod.com/artifacts/Oxide.Rust/staging/Oxide.Rust-linux.zip
-	unzip -o oxide.zip
-	echo "Oxide update completed"
-	cd $OLDPWD
+    echo -e "\nUpdating STAGING Oxide\n"
+    cd ~/rust_staging/
+    rm -f oxide.zip
+    wget -O oxide.zip https://downloads.oxidemod.com/artifacts/Oxide.Rust/staging/Oxide.Rust-linux.zip
+    unzip -o oxide.zip
+    echo "Oxide update completed"
+    cd $OLDPWD
 }
-
 
 show_menu() {
     clear
     echo "===================================================="
     echo " Ubuntu Rust Install Tool - Ver. $script_version"
     echo "===================================================="
-    echo " 1. Install pre-requisates"
+    echo " 1. Install pre-requisites"
     echo " 2. Download or Re-Install SteamCMD"
     echo " 3. Install/update Rust"
     echo " 4. Install/update oxide"
@@ -256,24 +244,20 @@ show_menu() {
     echo "===================================================="
 }
 
-
 # ---------- Main Execution ----------
-
-# Always get sudo password at the very start
-#get_sudo_password
 
 # Interactive menu mode
 while true; do
     show_menu
-    read -p "Enter your choice (0-8): " choice
+    read -p "Enter your choice (0-6): " choice < /dev/tty
 
     case $choice in
         1) install_requirements ;;
         2) install_steam ;;
-	3) install_rust ;;
-	4) install_oxide ;;
-	5) install_rust_staging ;;
-	6) install_oxide_staging ;;
+        3) install_rust ;;
+        4) install_oxide ;;
+        5) install_rust_staging ;;
+        6) install_oxide_staging ;;
         0)
             echo "Exiting. Have a nice day!"
             exit 0
@@ -283,5 +267,5 @@ while true; do
             ;;
     esac
 
-    read -p "Press [Enter] to continue..."
+    read -p "Press [Enter] to continue..." < /dev/tty
 done
