@@ -52,10 +52,10 @@ function install_requirements() {
         run_with_sudo add-apt-repository multiverse
         run_with_sudo dpkg --add-architecture i386
         run_with_sudo apt update
-        run_with_sudo apt-get install -y lib32gcc-s1 rsync unzip wget
+        run_with_sudo apt-get install -y lib32gcc-s1 rsync unzip wget curl
     elif [ -f /usr/bin/dnf ]; then
         # RHEL/CentOS/Fedora
-        run_with_sudo dnf install -y glibc.i686 rsync unzip wget libgcc.i686
+        run_with_sudo dnf install -y glibc.i686 rsync unzip wget libgcc.i686 curl
     else
         echo -e "\nERROR: Unable to find 'apt' or 'dnf'. Unsupported OS?\n"
         exit 1
