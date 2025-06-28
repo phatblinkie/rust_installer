@@ -1,0 +1,18 @@
+[Unit]
+Description=Rust Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+RestartSec=90s
+
+ExecStart=/home/USERNAME/rust_main/start_rust_main.sh
+Restart=always
+ExecStartPre=+wall "Starting rust server, for status run -- journalctl -f -u rust-main"
+RemainAfterExit=no
+KillMode=control-group
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target
