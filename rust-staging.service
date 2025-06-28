@@ -1,0 +1,18 @@
+[Unit]
+Description=Rust Staging Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+RestartSec=90s
+
+ExecStart=~/start_rust_staging.sh
+Restart=always
+ExecStartPre=+wall "Starting rust server, for status run -- journalctl -f -u rust-staging"
+RemainAfterExit=no
+KillMode=control-group
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target

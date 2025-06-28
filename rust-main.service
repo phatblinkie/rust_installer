@@ -4,15 +4,12 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-#EnvironmentFile=/etc/rust.conf
 Type=simple
-User=rust
-Group=rust
 RestartSec=90s
 
-ExecStart=/usr/local/bin/start_rust.sh
+ExecStart=~/start_rust_main.sh
 Restart=always
-ExecStartPre=+wall "Starting rust server, for status run -- journalctl -f -u rust"
+ExecStartPre=+wall "Starting rust server, for status run -- journalctl -f -u rust-main"
 RemainAfterExit=no
 KillMode=control-group
 KillSignal=SIGINT
