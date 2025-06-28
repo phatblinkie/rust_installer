@@ -162,11 +162,13 @@ function install_rust() {
 
 	#create the systemd files for the user, reload the daemon
 	mkdir -p ~/.config/systemd/user 2>/dev/null
-	wget -q --output-document=~/.config/systemd/user/rust-main.service https://raw.githubusercontent.com/phatblinkie/rust_installer/main/rust-main.service
+	wget -q -O ~/.config/systemd/user/rust-main.service https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/rust-main.service
+	wget -q -O ~/rust_main/rust-main-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/rust-main-settings.conf
+	wget -q -O ~/rust_main/start_rust_main.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/start_rust_main.sh
 	#reload daemon
 	systemctl --user daemon-reload
 	#enable linger mode
-	loginctl linger
+	loginctl enable-linger
 
 	echo -e "\n You can manage the service with the following commands\n"
 	echo -e "systemctl --user start|status|stop rust-main"
@@ -180,11 +182,13 @@ function install_rust_staging() {
 
 	#create the systemd files for the user, reload the daemon
 	mkdir -p ~/.config/systemd/user 2>/dev/null
-        wget -q --output-document=~/.config/systemd/user/rust-staging.service https://raw.githubusercontent.com/phatblinkie/rust_installer/main/rust-staging.service
-        #reload daemon
+        wget -q -O ~/.config/systemd/user/rust-staging.service https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/rust-staging.service
+        wget -q -O ~/rust_staging/rust-main-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/rust-staging-settings.conf
+	wget -q -O ~/rust_main/start_rust_staging.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/start_rust_staging.sh
+	#reload daemon
         systemctl --user daemon-reload
         #enable linger mode
-        loginctl linger
+        loginctl enable-linger
 
         echo -e "\n You can manage the service with the following commands\n"
         echo -e "systemctl --user start|status|stop rust-staging"
