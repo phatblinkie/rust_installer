@@ -8,43 +8,41 @@ run the following command as root
 wget -q -O - https://raw.githubusercontent.com/phatblinkie/rust_installer/main/install_rust.sh | bash
 
 This installer will do the following operations
-* install needed libs using yum or apt for steamcmd, and install steamcmd
-* Create user named rust (no password, not hackable, just an account to run the service as, you can set a pw later if you like)
-* install the service (service runs starter script, which does the following)
-  * updates oxide
-  * runs rust command
+* install needed libs using apt for steamcmd, and install steamcmd
+* install the rust server or rust staging server
+  * updates oxide for either
+  * installs systemd --user service files for rust and or rust staging branch
+  * puts configuration files for you to edit inside rust_main/ or rust_staging/
   * after rust exits (likely from your timed command daily telling rust to stop so it can clear its entity leaks), it will make a -backup of the mod folder from the config
-* install the scripts and systemd services to run rust, update oxide, update rust
-* reload systemctl daemon
 * sudo to user rust and install rust for you. 
 
 
-**IMPORTANT --->>>> edit /etc/rust-settings.conf**
+**IMPORTANT --->>>> edit ~/rust_main/rust-main/settings.conf**
 
-after editing this file you can start your server with
-- **systemctl start rust**
+After editing this file you can start your server with
+- **systemctl --user start rust-main*
+- **systemctl --user start rust-staging*
+
 
 you can see the status with 
-- **systemctl status rust**
+- **systemctl --user status rust-main*
+- **systemctl --user status rust-staging*
 
-you can watch the log files with 
-- **journalctl -f -u rust**
+You can watch the log files with 
+- **journalctl -f -u rust-main*
+- **journalctl -f -u rust-staging*
 
-and you can restart or stop with
-- **systemctl restart rust**
-- **systemctl stop rust**
 
-to set the service to start up at boot time run the command
-- **systemctl enable rust**
+And you can restart or stop with
+- **systemctl --user restart rust-main**
+- **systemctl --user stop rust-main**
 
-to update oxide manually run the commands
-- **systemctl stop rust**
-then
-- **systemctl start update-oxide**
+To set the service to start up at boot time run the command
+- **systemctl --user enable rust-main**
+- **systemctl --user enable rust-staging**
 
-to update rust manually run the commands
-- **systemctl stop rust**
-then
-- **systemctl start update-rust**
 
-be sure to star the repo, to show your support :) happy rusting
+To update oxide you can run the installer again, and pick the choice to update oxid
+This also applies the other options like updating the rust server as well
+
+Be sure to star the repo, to show your support :) happy rusting
