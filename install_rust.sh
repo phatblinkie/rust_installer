@@ -153,15 +153,15 @@ function install_rust() {
 
     #create the systemd files for the user, reload the daemon
     mkdir -p ~/.config/systemd/user 2>/dev/null
-    wget -q -O ~/.config/systemd/user/rust-main.service https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/servicefiles/rust-main.service
+    wget -q -O ~/.config/systemd/user/rust-main.service https://raw.githubusercontent.com/phatblinkie/rust_installer/main/servicefiles/rust-main.service
     if [ -f ~/rust_main/rust-main-settings.conf ]
     then
         echo "Found existing configuration file, skipping overwrite"
     else
-        wget -q -O ~/rust_main/rust-main-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/configs/rust-main-settings.conf
+        wget -q -O ~/rust_main/rust-main-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/main/configs/rust-main-settings.conf
     fi
 
-    wget -q -O ~/rust_main/start_rust_main.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/bin/start_rust_main.sh
+    wget -q -O ~/rust_main/start_rust_main.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/main/bin/start_rust_main.sh
     sed -i "s/USERNAME/$USER/" ~/.config/systemd/user/rust-main.service
     chmod 0755  ~/rust_main/start_rust_main.sh
     #reload daemon
@@ -181,15 +181,15 @@ function install_rust_staging() {
 
     #create the systemd files for the user, reload the daemon
     mkdir -p ~/.config/systemd/user 2>/dev/null
-    wget -q -O ~/.config/systemd/user/rust-staging.service https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/servicefiles/rust-staging.service
+    wget -q -O ~/.config/systemd/user/rust-staging.service https://raw.githubusercontent.com/phatblinkie/rust_installer/main/servicefiles/rust-staging.service
     if [ -f ~/rust_staging/rust-staging-settings.conf ]
     then
         echo "Found existing configuration file, skipping overwrite"
     else
-        wget -q -O ~/rust_staging/rust-staging-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/configs/rust-staging-settings.conf
+        wget -q -O ~/rust_staging/rust-staging-settings.conf https://raw.githubusercontent.com/phatblinkie/rust_installer/main/configs/rust-staging-settings.conf
     fi
 
-    wget -q -O ~/rust_staging/start_rust_staging.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/dev/bin/start_rust_staging.sh
+    wget -q -O ~/rust_staging/start_rust_staging.sh https://raw.githubusercontent.com/phatblinkie/rust_installer/main/bin/start_rust_staging.sh
     sed -i "s/USERNAME/$USER/" ~/.config/systemd/user/rust-staging.service
     chmod 0755 ~/rust_staging/start_rust_staging.sh
     #reload daemon
