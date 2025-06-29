@@ -1,6 +1,6 @@
 #!/bin/bash
 
-script_version="1.0.0"
+script_version="1.0.1"
 # ---------- Initial Setup ----------
 
 # Clear the sudo password variable on exit
@@ -474,18 +474,19 @@ function install_oxide_staging() {
 
 show_menu() {
     clear
-    echo "===================================================="
+    echo "==========================================================================="
     echo " Rust Install Tool - Ver. $script_version"
-    echo "===================================================="
+    echo "==========================================================================="
     echo " 1. Install pre-requisites"
     echo " 2. Download or Re-Install SteamCMD"
     echo " 3. Install/update Rust"
     echo " 4. Install/update oxide"
     echo " 5. Install/update Rust Staging Branch"
     echo " 6. Install/update oxide on Staging Branch"
-    echo " 7. Configure firewall"
+    echo " 7. Configure firewall - uses ports in the config files. edit those first"
+    echo ""
     echo " 0. Exit"
-    echo "===================================================="
+    echo "============================================================================"
 }
 
 # ---------- Main Execution ----------
