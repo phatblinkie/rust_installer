@@ -52,7 +52,7 @@ function install_requirements() {
         run_with_sudo add-apt-repository multiverse
         run_with_sudo dpkg --add-architecture i386
         run_with_sudo apt update
-        run_with_sudo apt-get install -y lib32gcc-s1 rsync unzip wget curl
+        run_with_sudo apt-get install -y lib32gcc-s1 rsync unzip wget curl dbus-user-session
     elif [ -f /usr/bin/dnf ]; then
         # RHEL/CentOS/Fedora
         run_with_sudo dnf install -y glibc.i686 rsync unzip wget libgcc.i686 curl
@@ -61,6 +61,7 @@ function install_requirements() {
         exit 1
     fi
 }
+
 
 function get_sudo_password() {
     # Clear any existing sudo credentials
@@ -249,7 +250,7 @@ function check_success() {
 
 function install_rust() {
     echo -e "\nInstalling or updating Rust - main branch\n"
-    if ! ./Steam/steamcmd.sh +force_install_dir ~/rust_main/ +login anonymous +app_update 258550 validate +exit; then
+    if ! ~/Steam/steamcmd.sh +force_install_dir ~/rust_main/ +login anonymous +app_update 258550 validate +exit; then
         echo -e "\nERROR: Failed to install/update Rust. Check SteamCMD or network.\n"
         return 1
     fi
@@ -296,20 +297,48 @@ function install_rust() {
     fi
     sed -i "s/USERNAME/$USER/" ~/.config/systemd/user/rust-main.service
     chmod 0755 ~/rust_main/start_rust_main.sh
+    # Set environment variables for systemd user session
+    export XDG_RUNTIME_DIR=/run/user/$(id -u)
+    export DBUS_SESSION_BUS_ADDRESS=unix:path=${XDG_RUNTIME_DIR}/bus
+
     # Reload daemon
     systemctl --user daemon-reload
     # Enable linger mode
-    loginctl enable-linger
+    loginctl enable-linger $USER
 
-    echo -e "\n You can manage the service with the following commands\n"
+    # Ensure systemd user instance is running
+    if ! pgrep -u "$USER" -f "systemd --user" >/dev/null; then
+        echo "Starting systemd user instance..."
+        /lib/systemd/systemd --user &
+        sleep 1 # Give it a moment to initialize
+    fi
+
+    # Prompt user to enable the service on boot
+    echo -e "\nDo you want the rust-main service to start automatically on boot? (y/n)"
+    read -r response < /dev/tty
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        echo "Enabling rust-main service to start on boot..."
+        if systemctl --user enable rust-main; then
+            echo "Successfully enabled rust-main service."
+        else
+            echo "ERROR: Failed to enable rust-main service. Ensure dbus-user-session is installed and the user session is properly initialized."
+            echo "Try running: sudo apt-get install dbus-user-session"
+            echo "And ensure XDG_RUNTIME_DIR and DBUS_SESSION_BUS_ADDRESS are set."
+        fi
+    else
+        echo "rust-main service will not start automatically on boot."
+    fi
+
+    echo -e "\nYou can manage the service with the following commands\n"
     echo -e "systemctl --user start|status|stop rust-main"
     echo
     echo -e "To see logs in real time, use journalctl -f -u rust-main"
 }
 
+
 function install_rust_staging() {
     echo -e "\nInstalling or updating Rust - STAGING branch\n"
-    if ! ./Steam/steamcmd.sh +force_install_dir ~/rust_staging/ +login anonymous +app_update 258550 -beta staging validate +exit; then
+    if ! ~/Steam/steamcmd.sh +force_install_dir ~/rust_staging/ +login anonymous +app_update 258550 -beta staging validate +exit; then
         echo -e "\nERROR: Failed to install/update Rust Staging. Check SteamCMD or network.\n"
         return 1
     fi
@@ -356,16 +385,44 @@ function install_rust_staging() {
     fi
     sed -i "s/USERNAME/$USER/" ~/.config/systemd/user/rust-staging.service
     chmod 0755 ~/rust_staging/start_rust_staging.sh
+    # Set environment variables for systemd user session
+    export XDG_RUNTIME_DIR=/run/user/$(id -u)
+    export DBUS_SESSION_BUS_ADDRESS=unix:path=${XDG_RUNTIME_DIR}/bus
+
     # Reload daemon
     systemctl --user daemon-reload
     # Enable linger mode
-    loginctl enable-linger
+    loginctl enable-linger $USER
 
-    echo -e "\n You can manage the service with the following commands\n"
+    # Ensure systemd user instance is running
+    if ! pgrep -u "$USER" -f "systemd --user" >/dev/null; then
+        echo "Starting systemd user instance..."
+        /lib/systemd/systemd --user &
+        sleep 1 # Give it a moment to initialize
+    fi
+
+    # Prompt user to enable the service on boot
+    echo -e "\nDo you want the rust-staging service to start automatically on boot? (y/n)"
+    read -r response < /dev/tty
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        echo "Enabling rust-staging service to start on boot..."
+        if systemctl --user enable rust-staging; then
+            echo "Successfully enabled rust-staging service."
+        else
+            echo "ERROR: Failed to enable rust-staging service. Ensure dbus-user-session is installed and the user session is properly initialized."
+            echo "Try running: sudo apt-get install dbus-user-session"
+            echo "And ensure XDG_RUNTIME_DIR and DBUS_SESSION_BUS_ADDRESS are set."
+        fi
+    else
+        echo "rust-staging service will not start automatically on boot."
+    fi
+
+    echo -e "\nYou can manage the service with the following commands\n"
     echo -e "systemctl --user start|status|stop rust-staging"
     echo
     echo -e "To see logs in real time, use journalctl -f -u rust-staging"
 }
+
 
 function install_oxide() {
     # Check if rust is running, if so warn and exit
