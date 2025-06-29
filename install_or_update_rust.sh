@@ -143,14 +143,18 @@ function configure_firewall() {
         return 0
     fi
 
+    # Track errors for final reporting
+    local errors=()
+
     if command -v ufw >/dev/null 2>&1; then
         # Ubuntu (ufw)
         echo "Detected ufw, configuring firewall..."
         if ! run_with_sudo ufw status | grep -q "Status: active"; then
             echo "Enabling ufw (force enable to avoid prompt)..."
             echo "Running: ufw --force enable"
-            run_with_sudo ufw --force enable
-            check_success "Failed to enable ufw" && return 1
+            if ! run_with_sudo ufw --force enable; then
+                errors+=("Failed to enable ufw")
+            fi
         fi
 
         for service in "${!PORTS[@]}"; do
@@ -159,22 +163,24 @@ function configure_firewall() {
             if ! run_with_sudo ufw status | grep -q "$port"; then
                 echo "Opening port $port for $service..."
                 echo "Running: ufw allow $port"
-                run_with_sudo ufw allow "$port"
-                check_success "Failed to open port $port" && return 1
+                if ! run_with_sudo ufw allow "$port"; then
+                    errors+=("Failed to open port $port for $service")
+                else
+                    echo "Successfully opened port $port for $service"
+                fi
             else
                 echo "Port $port for $service already open, skipping..."
             fi
         done
-
-        echo "Firewall configuration completed successfully!"
 
     elif command -v firewall-cmd >/dev/null 2>&1; then
         # RHEL/CentOS/Fedora (firewalld)
         if ! systemctl is-active --quiet firewalld; then
             echo "Starting firewalld..."
             echo "Running: systemctl start firewalld"
-            run_with_sudo systemctl start firewalld
-            check_success "Failed to start firewalld" && return 1
+            if ! run_with_sudo systemctl start firewalld; then
+                errors+=("Failed to start firewalld")
+            fi
         fi
 
         for service in "${!PORTS[@]}"; do
@@ -183,21 +189,38 @@ function configure_firewall() {
             if ! run_with_sudo firewall-cmd --query-port="$port" | grep -q "yes"; then
                 echo "Opening port $port for $service..."
                 echo "Running: firewall-cmd --permanent --add-port=$port"
-                run_with_sudo firewall-cmd --permanent --add-port="$port"
-                check_success "Failed to open port $port" && return 1
+                if ! run_with_sudo firewall-cmd --permanent --add-port="$port"; then
+                    errors+=("Failed to open port $port for $service")
+                else
+                    echo "Successfully opened port $port for $service"
+                fi
             else
                 echo "Port $port for $service already open, skipping..."
             fi
         done
 
-        echo "Reloading firewalld..."
-        echo "Running: firewall-cmd --reload"
-        run_with_sudo firewall-cmd --reload
-        check_success "Failed to reload firewalld" && return 1
+        if [ ${#errors[@]} -eq 0 ]; then
+            echo "Reloading firewalld..."
+            echo "Running: firewall-cmd --reload"
+            if ! run_with_sudo firewall-cmd --reload; then
+                errors+=("Failed to reload firewalld")
+            fi
+        fi
 
-        echo "Firewall configuration completed successfully!"
     else
         echo "Warning: Neither ufw nor firewalld is installed. Skipping firewall configuration."
+        return 0
+    fi
+
+    # Report any errors
+    if [ ${#errors[@]} -gt 0 ]; then
+        echo -e "\nFirewall configuration completed with errors:"
+        for error in "${errors[@]}"; do
+            echo "  - $error"
+        done
+        return 1
+    else
+        echo "Firewall configuration completed successfully!"
         return 0
     fi
 }
