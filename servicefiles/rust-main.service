@@ -9,7 +9,7 @@ RestartSec=90s
 
 ExecStart=/home/USERNAME/rust_main/start_rust_main.sh
 Restart=always
-ExecStartPre=+wall "Starting rust server, for status run -- journalctl -f -u rust-main"
+ExecStartPre=+wall "Starting rust server, for status run -- journalctl --user -f -u rust-main"
 RemainAfterExit=no
 KillMode=control-group
 KillSignal=SIGINT
