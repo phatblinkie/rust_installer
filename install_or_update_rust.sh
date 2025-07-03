@@ -305,6 +305,11 @@ function install_rust() {
     export XDG_RUNTIME_DIR=/run/user/$(id -u)
     export DBUS_SESSION_BUS_ADDRESS=unix:path=${XDG_RUNTIME_DIR}/bus
 
+
+    #fix fucking steamcmd being a pod
+    mkdir -p  ~/.steam/sdk64/
+    ln -s ~/rust_main/RustDedicated_Data/Plugins/x86_64/steamclient.so ~/.steam/sdk64/steamclient.so
+
     # Reload daemon
     systemctl --user daemon-reload
     # Enable linger mode
@@ -336,7 +341,7 @@ function install_rust() {
     echo -e "\nYou can manage the service with the following commands\n"
     echo -e "systemctl --user start|status|stop rust-main"
     echo
-    echo -e "To see logs in real time, use journalctl -f -u rust-main"
+    echo -e "To see logs in real time, use journalctl --user -f -u rust-main"
 }
 
 
@@ -396,6 +401,11 @@ function install_rust_staging() {
     echo "export XDG_RUNTIME_DIR=/run/user/$(id -u)" >> ~/.profile
     echo "export DBUS_SESSION_BUS_ADDRESS=unix:path=${XDG_RUNTIME_DIR}/bus" >> ~/.profile
 
+
+    #fix fucking steamcmd being a pod
+    mkdir -p  ~/.steam/sdk64/
+    ln -s ~/rust_staging/RustDedicated_Data/Plugins/x86_64/steamclient.so ~/.steam/sdk64/steamclient.so
+
     # Reload daemon
     systemctl --user daemon-reload
     # Enable linger mode
@@ -427,7 +437,7 @@ function install_rust_staging() {
     echo -e "\nYou can manage the service with the following commands\n"
     echo -e "systemctl --user start|status|stop rust-staging"
     echo
-    echo -e "To see logs in real time, use journalctl -f -u rust-staging"
+    echo -e "To see logs in real time, use journalctl --user -f -u rust-staging"
     echo
     echo
     echo
