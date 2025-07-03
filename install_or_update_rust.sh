@@ -1,5 +1,9 @@
 #!/bin/bash
-
+if [ "$UID" -eq "0" ]
+then
+        echo "do not run as root or with sudo, instead it will ask your sudo pw as needed"
+	exit 1
+fi
 script_version="1.0.1"
 # ---------- Initial Setup ----------
 
