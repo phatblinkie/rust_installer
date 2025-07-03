@@ -17,12 +17,12 @@ trap cleanup EXIT
 
 function install_steam() {
     echo -e "\nInstalling SteamCMD\n"
-    if [ -d Steam ]; then
+    if [ -d ~/Steam ]; then
         echo -e "Detected existing steam install, removing...\n"
-        rm -rf Steam
+        rm -rf ~/Steam
     fi
-    mkdir -p Steam
-    cd Steam
+    mkdir -p ~/Steam
+    cd ~/Steam
     # Clean up unwanted trash
     rm -rf /tmp/dumps
     # Download and unpack steamcmd
@@ -34,15 +34,15 @@ function install_steam() {
     else
         if ! curl -sqL "$STEAMCMD_URL" | tar zxvf -; then
             echo -e "\nERROR: Failed to download or extract SteamCMD. Provide $STEAMCMD_LOCAL in disconnected environment.\n"
-            cd $OLDPWD
             return 1
         fi
     fi
-    # Update the steam client
-    ./steamcmd.sh +quit
 
     # Set permissions for steam files
     chmod 0755 linux32/* steamcmd.sh
+
+    # Update the steam client
+    ./steamcmd.sh +quit
 
     # Clean up unwanted trash
     rm -rf /tmp/dumps
@@ -393,6 +393,9 @@ function install_rust_staging() {
     export XDG_RUNTIME_DIR=/run/user/$(id -u)
     export DBUS_SESSION_BUS_ADDRESS=unix:path=${XDG_RUNTIME_DIR}/bus
 
+    echo "export XDG_RUNTIME_DIR=/run/user/$(id -u)" >> ~/.profile
+    echo "export DBUS_SESSION_BUS_ADDRESS=unix:path=${XDG_RUNTIME_DIR}/bus" >> ~/.profile
+
     # Reload daemon
     systemctl --user daemon-reload
     # Enable linger mode
@@ -425,6 +428,11 @@ function install_rust_staging() {
     echo -e "systemctl --user start|status|stop rust-staging"
     echo
     echo -e "To see logs in real time, use journalctl -f -u rust-staging"
+    echo
+    echo
+    echo
+    echo -e "IMPORTANT! you will need to relogin for the systemctl --user to work properly"
+    echo -e "if you dont want to relogin, type '. ~/.profile' to load the settings"
 }
 
 
