@@ -39,6 +39,7 @@ echo -e "$USERS_CFG" > ~/rust_main/server/jan1/cfg/users.cfg
 +server.port "$GAMEPORT" \
 +server.queryport "$QUERYPORT" \
 +rcon.ip "$IP" \
++rcon.web "1" \
 +rcon.port "$RCONPORT" \
 +rcon.password "$RCONPASS" \
 +server.maxplayers "$PLAYERLIMIT" \
@@ -100,6 +101,7 @@ echo -e "$USERS_CFG" > ~/rust_main/server/jan1/cfg/users.cfg
 +server.queryport "$QUERYPORT" \
 +rcon.ip "$IP" \
 +rcon.port "$RCONPORT" \
++rcon.web "1" \
 +rcon.password "$RCONPASS" \
 +server.maxplayers "$PLAYERLIMIT" \
 +server.hostname "$SERVER_HOSTNAME" \

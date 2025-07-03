@@ -39,6 +39,7 @@ echo -e "$USERS_CFG" > ~/rust_staging/server/jan1/cfg/users.cfg
 +server.port "$GAMEPORT" \
 +server.queryport "$QUERYPORT" \
 +rcon.ip "$IP" \
++rcon.web "1" \
 +rcon.port "$RCONPORT" \
 +rcon.password "$RCONPASS" \
 +server.maxplayers "$PLAYERLIMIT" \
@@ -96,6 +97,7 @@ echo -e "$USERS_CFG" > ~/rust_staging/server/jan1/cfg/users.cfg
 #$CMDTORUN $RUSTCMD
 ./RustDedicated -batchmode -nographics \
 +server.ip "$IP" \
++rcon.web "1" \
 +server.port "$GAMEPORT" \
 +server.queryport "$QUERYPORT" \
 +rcon.ip "$IP" \
