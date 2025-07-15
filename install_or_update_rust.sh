@@ -506,6 +506,8 @@ show_menu() {
     echo " 5. Install/update Rust Staging Branch"
     echo " 6. Install/update oxide on Staging Branch"
     echo " 7. Configure firewall - uses ports in the config files. edit those first"
+    echo " 8. Start main rust server"
+    echo " 9. Stop main rust server"
     echo ""
     echo " 0. Exit"
     echo "============================================================================"
@@ -532,6 +534,8 @@ while true; do
             get_sudo_password
             configure_firewall
             ;;
+	8)  echo "Starting rust-main" && systemctl --user start rust-main ;;
+	9)  echo "Stopping rust-main" && systemctl --user stop rust-main ;;
         0)
             echo "Exiting. Have a nice day!"
             exit 0
