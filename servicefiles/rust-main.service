@@ -1,18 +1,23 @@
 [Unit]
 Description=Rust Server
-After=network-online.target
-Wants=network-online.target
 
 [Service]
 Type=simple
-RestartSec=90s
-
-ExecStart=/home/USERNAME/rust_main/start_rust_main.sh
+RestartSec=30s
+ExecStart=/home/rust/rust_main/start_rust_main.sh
 Restart=always
-ExecStartPre=+wall "Starting rust server, for status run -- journalctl --user -f -u rust-main"
+RestartForceExitStatus=1
+SuccessExitStatus=0
+ExecStartPre=+logger -p user.info "Starting rust server, for status run: journalctl --user -f -u rust-main"
 RemainAfterExit=no
 KillMode=control-group
 KillSignal=SIGINT
+TimeoutStartSec=600
+TimeoutStopSec=300
+MemoryMax=16G
+CPUQuota=50%
+StandardOutput=journal
+StandardError=journal
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
