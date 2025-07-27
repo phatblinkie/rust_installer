@@ -308,11 +308,11 @@ function install_rust() {
 
     #istall rustedit.dll
     echo installing rustedit.dll
-    curl -o ~/rust_main/RustDedicated_Data/Managed/Oxide.Ext.RustEdit.dll https://github.com/k1lly0u/Oxide.Ext.RustEdit/raw/refs/heads/master/Oxide.Ext.RustEdit.dll
+    curl -o ~/rust_main/RustDedicated_Data/Managed/Oxide.Ext.RustEdit.dll "https://github.com/k1lly0u/Oxide.Ext.RustEdit/raw/refs/heads/master/Oxide.Ext.RustEdit.dll"
 
     #install Discord dlls
     echo installing discord extension
-    curl -o ~/rust_main/RustDedicated_Data/Managed/Oxide.Ext.Discord.dll https://umod.org/extensions/discord/download
+    curl -o ~/rust_main/RustDedicated_Data/Managed/Oxide.Ext.Discord.dll "https://umod.org/extensions/discord/download"
 
     #fix fucking steamcmd being a pod
     mkdir -p  ~/.steam/sdk64/
@@ -411,11 +411,11 @@ function install_rust_staging() {
 
     #istall rustedit.dll
     echo installing rustedit.dll
-    curl -o ~/rust_staging/RustDedicated_Data/Managed/Oxide.Ext.RustEdit.dll https://github.com/k1lly0u/Oxide.Ext.RustEdit/raw/refs/heads/master/Oxide.Ext.RustEdit.dll
+    curl --output ~/rust_staging/RustDedicated_Data/Managed/Oxide.Ext.RustEdit.dll "https://github.com/k1lly0u/Oxide.Ext.RustEdit/raw/refs/heads/master/Oxide.Ext.RustEdit.dll"
 
     #install Discord dlls
     echo installing discord extension
-    curl -o ~/rust_staging/RustDedicated_Data/Managed/Oxide.Ext.Discord.dll https://umod.org/extensions/discord/download
+    curl --output ~/rust_staging/RustDedicated_Data/Managed/Oxide.Ext.Discord.dll "https://umod.org/extensions/discord/download"
 
 
     #fix fucking steamcmd being a pod
