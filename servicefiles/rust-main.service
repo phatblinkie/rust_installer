@@ -15,7 +15,7 @@ KillSignal=SIGINT
 TimeoutStartSec=600
 TimeoutStopSec=300
 MemoryMax=16G
-CPUQuota=50%
+#CPUQuota=100%
 StandardOutput=journal
 StandardError=journal
 
