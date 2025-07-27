@@ -306,6 +306,14 @@ function install_rust() {
     export DBUS_SESSION_BUS_ADDRESS=unix:path=${XDG_RUNTIME_DIR}/bus
 
 
+    #istall rustedit.dll
+    echo installing rustedit.dll
+    curl -o ~/rust_main/RustDedicated_Data/Managed/Oxide.Ext.RustEdit.dll https://github.com/k1lly0u/Oxide.Ext.RustEdit/raw/refs/heads/master/Oxide.Ext.RustEdit.dll
+
+    #install Discord dlls
+    echo installing discord extension
+    curl -o ~/rust_main/RustDedicated_Data/Managed/Oxide.Ext.Discord.dll https://umod.org/extensions/discord/download
+
     #fix fucking steamcmd being a pod
     mkdir -p  ~/.steam/sdk64/
     ln -s ~/rust_main/RustDedicated_Data/Plugins/x86_64/steamclient.so ~/.steam/sdk64/steamclient.so
@@ -400,6 +408,14 @@ function install_rust_staging() {
 
     echo "export XDG_RUNTIME_DIR=/run/user/$(id -u)" >> ~/.profile
     echo "export DBUS_SESSION_BUS_ADDRESS=unix:path=${XDG_RUNTIME_DIR}/bus" >> ~/.profile
+
+    #istall rustedit.dll
+    echo installing rustedit.dll
+    curl -o ~/rust_staging/RustDedicated_Data/Managed/Oxide.Ext.RustEdit.dll https://github.com/k1lly0u/Oxide.Ext.RustEdit/raw/refs/heads/master/Oxide.Ext.RustEdit.dll
+
+    #install Discord dlls
+    echo installing discord extension
+    curl -o ~/rust_staging/RustDedicated_Data/Managed/Oxide.Ext.Discord.dll https://umod.org/extensions/discord/download
 
 
     #fix fucking steamcmd being a pod
