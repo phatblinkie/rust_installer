@@ -4,7 +4,7 @@ then
         echo "do not run as root or with sudo, instead it will ask your sudo pw as needed"
 	exit 1
 fi
-script_version="1.0.1"
+script_version="1.0.2"
 # ---------- Initial Setup ----------
 
 # Clear the sudo password variable on exit
@@ -253,6 +253,9 @@ function check_success() {
 }
 
 function install_rust() {
+    # Check if rust is running, if so warn and exit
+    systemctl --user is-active --quiet rust-main && echo -e "\n\nERROR: Rust Service is running\n\nStop this first to avoid corrupting your installation\n\n HINT: systemctl stop rust-main" && return 1
+
     echo -e "\nInstalling or updating Rust - main branch\n"
     if ! ~/Steam/steamcmd.sh +force_install_dir ~/rust_main/ +login anonymous +app_update 258550 validate +exit; then
         echo -e "\nERROR: Failed to install/update Rust. Check SteamCMD or network.\n"
@@ -261,12 +264,19 @@ function install_rust() {
 
     # Create the systemd files for the user, reload the daemon
     mkdir -p ~/.config/systemd/user 2>/dev/null
+
+    #install service file
     RUST_SERVICE_URL="https://raw.githubusercontent.com/phatblinkie/rust_installer/main/servicefiles/rust-main.service"
-    RUST_SERVICE_LOCAL="/path/to/local/rust-main.service" # Update for disconnected env
+    RUST_SERVICE_LOCAL="./servicefiles/rust-main.service" # Update for disconnected env
     if [ -f "$RUST_SERVICE_LOCAL" ]; then
         echo "Using local rust-main.service: $RUST_SERVICE_LOCAL"
         cp "$RUST_SERVICE_LOCAL" ~/.config/systemd/user/rust-main.service
-    else
+        #fix the path to the local user
+        if ! sed -i  "s#HOMEPATH#$HOME#g" ~/.config/systemd/user/rust-main.service; then
+            echo -e "\nERROR: file ~/.config/systemd/user/rust-main.service may contain invalid path, unable to modify"
+            return 1
+        fi
+    else 
         if ! wget -q -O ~/.config/systemd/user/rust-main.service "$RUST_SERVICE_URL"; then
             echo -e "\nERROR: Failed to download rust-main.service. Provide $RUST_SERVICE_LOCAL in disconnected environment.\n"
             return 1
@@ -277,11 +287,13 @@ function install_rust() {
 	    return 1
 	fi
     fi
+
+    #install settings file
     if [ -f ~/rust_main/rust-main-settings.conf ]; then
         echo "Found existing configuration file, skipping overwrite"
     else
         RUST_CONFIG_URL="https://raw.githubusercontent.com/phatblinkie/rust_installer/main/configs/rust-main-settings.conf"
-        RUST_CONFIG_LOCAL="/path/to/local/rust-main-settings.conf" # Update for disconnected env
+        RUST_CONFIG_LOCAL="./configs/rust-main-settings.conf" # Update for disconnected env
         if [ -f "$RUST_CONFIG_LOCAL" ]; then
             echo "Using local rust-main-settings.conf: $RUST_CONFIG_LOCAL"
             cp "$RUST_CONFIG_LOCAL" ~/rust_main/rust-main-settings.conf
@@ -300,8 +312,10 @@ function install_rust() {
         fi
     fi
 
+    #install start script
+
     RUST_SCRIPT_URL="https://raw.githubusercontent.com/phatblinkie/rust_installer/main/bin/start_rust_main.sh"
-    RUST_SCRIPT_LOCAL="/path/to/local/start_rust_main.sh" # Update for disconnected env
+    RUST_SCRIPT_LOCAL="./bin/start_rust_main.sh" # Update for disconnected env
     if [ -f "$RUST_SCRIPT_LOCAL" ]; then
         echo "Using local start_rust_main.sh: $RUST_SCRIPT_LOCAL"
         cp "$RUST_SCRIPT_LOCAL" ~/rust_main/start_rust_main.sh
@@ -311,7 +325,6 @@ function install_rust() {
             return 1
         fi
     fi
-    sed -i "s/USERNAME/$USER/" ~/.config/systemd/user/rust-main.service
     chmod 0755 ~/rust_main/start_rust_main.sh
     # Set environment variables for systemd user session
     export XDG_RUNTIME_DIR=/run/user/$(id -u)
@@ -326,7 +339,7 @@ function install_rust() {
     echo installing discord extension
     curl -o ~/rust_main/RustDedicated_Data/Managed/Oxide.Ext.Discord.dll "https://umod.org/extensions/discord/download"
 
-    #fix fucking steamcmd being a pod
+    #fix fucking steamcmd being a pos
     mkdir -p  ~/.steam/sdk64/
     ln -s ~/rust_main/RustDedicated_Data/Plugins/x86_64/steamclient.so ~/.steam/sdk64/steamclient.so
 
@@ -364,24 +377,33 @@ function install_rust() {
     echo -e "To see logs in real time, use journalctl --user -f -u rust-main"
 }
 
-
 function install_rust_staging() {
+    # Check if rust is running, if so warn and exit
+    systemctl --user is-active --quiet rust-staging && echo -e "\n\nERROR: Rust Staging Service is running\n\nStop this first to avoid corrupting your installation\n\n HINT: systemctl stop rust-staging" && return 1
+
     echo -e "\nInstalling or updating Rust - STAGING branch\n"
     if ! ~/Steam/steamcmd.sh +force_install_dir ~/rust_staging/ +login anonymous +app_update 258550 -beta staging validate +exit; then
-        echo -e "\nERROR: Failed to install/update Rust Staging. Check SteamCMD or network.\n"
+        echo -e "\nERROR: Failed to install/update Rust staging branch. Check SteamCMD or network.\n"
         return 1
     fi
 
     # Create the systemd files for the user, reload the daemon
     mkdir -p ~/.config/systemd/user 2>/dev/null
-    STAGING_SERVICE_URL="https://raw.githubusercontent.com/phatblinkie/rust_installer/main/servicefiles/rust-staging.service"
-    STAGING_SERVICE_LOCAL="/path/to/local/rust-staging.service" # Update for disconnected env
-    if [ -f "$STAGING_SERVICE_LOCAL" ]; then
-        echo "Using local rust-staging.service: $STAGING_SERVICE_LOCAL"
-        cp "$STAGING_SERVICE_LOCAL" ~/.config/systemd/user/rust-staging.service
+
+    #install service file
+    RUST_SERVICE_URL="https://raw.githubusercontent.com/phatblinkie/rust_installer/main/servicefiles/rust-staging.service"
+    RUST_SERVICE_LOCAL="./servicefiles/rust-staging.service" # Update for disconnected env
+    if [ -f "$RUST_SERVICE_LOCAL" ]; then
+        echo "Using local rust-staging.service: $RUST_SERVICE_LOCAL"
+        cp "$RUST_SERVICE_LOCAL" ~/.config/systemd/user/rust-staging.service
+        #fix the path to the local user
+        if ! sed -i  "s#HOMEPATH#$HOME#g" ~/.config/systemd/user/rust-staging.service; then
+            echo -e "\nERROR: file ~/.config/systemd/user/rust-staging.service may contain invalid path, unable to modify"
+            return 1
+        fi
     else
-        if ! wget -q -O ~/.config/systemd/user/rust-staging.service "$STAGING_SERVICE_URL"; then
-            echo -e "\nERROR: Failed to download rust-staging.service. Provide $STAGING_SERVICE_LOCAL in disconnected environment.\n"
+        if ! wget -q -O ~/.config/systemd/user/rust-staging.service "$RUST_SERVICE_URL"; then
+            echo -e "\nERROR: Failed to download rust-staging.service. Provide $RUST_SERVICE_LOCAL in disconnected environment.\n"
             return 1
         fi
         #fix the path to the local user
@@ -390,57 +412,58 @@ function install_rust_staging() {
             return 1
         fi
     fi
+
+    #install settings file
     if [ -f ~/rust_staging/rust-staging-settings.conf ]; then
         echo "Found existing configuration file, skipping overwrite"
     else
-        STAGING_CONFIG_URL="https://raw.githubusercontent.com/phatblinkie/rust_installer/main/configs/rust-staging-settings.conf"
-        STAGING_CONFIG_LOCAL="/path/to/local/rust-staging-settings.conf" # Update for disconnected env
-        if [ -f "$STAGING_CONFIG_LOCAL" ]; then
-            echo "Using local rust-staging-settings.conf: $STAGING_CONFIG_LOCAL"
-            cp "$STAGING_CONFIG_LOCAL" ~/rust_staging/rust-staging-settings.conf
+        RUST_CONFIG_URL="https://raw.githubusercontent.com/phatblinkie/rust_installer/main/configs/rust-staging-settings.conf"
+        RUST_CONFIG_LOCAL="./configs/rust-staging-settings.conf" # Update for disconnected env
+        if [ -f "$RUST_CONFIG_LOCAL" ]; then
+            echo "Using local rust-staging-settings.conf: $RUST_CONFIG_LOCAL"
+            cp "$RUST_CONFIG_LOCAL" ~/rust_staging/rust-staging-settings.conf
         else
-            if ! wget -q -O ~/rust_staging/rust-staging-settings.conf "$STAGING_CONFIG_URL"; then
-                echo -e "\nERROR: Failed to download rust-staging-settings.conf. Provide $STAGING_CONFIG_LOCAL in disconnected environment.\n"
+            if ! wget -q -O ~/rust_staging/rust-staging-settings.conf "$RUST_CONFIG_URL"; then
+                echo -e "\nERROR: Failed to download rust-staging-settings.conf. Provide $RUST_CONFIG_LOCAL in disconnected environment.\n"
                 return 1
             fi
-           #fix the path to the local user
-           if ! sed -i  "s#HOMEPATH#$HOME#g" ~/.config/systemd/user/rust-staging.service; then
-               echo -e "\nERROR: file ~/.config/systemd/user/rust-staging.service may contain invalid path, unable to modify"
-               return 1
-           fi
+
+            #fix the path to the local user
+            if ! sed -i  "s#HOMEPATH#$HOME#g" ~/.config/systemd/user/rust-staging.service; then
+                echo -e "\nERROR: file ~/.config/systemd/user/rust-staging.service may contain invalid path, unable to modify"
+                return 1
+            fi
+
         fi
     fi
+    #install start script
 
-    STAGING_SCRIPT_URL="https://raw.githubusercontent.com/phatblinkie/rust_installer/main/bin/start_rust_staging.sh"
-    STAGING_SCRIPT_LOCAL="/path/to/local/start_rust_staging.sh" # Update for disconnected env
-    if [ -f "$STAGING_SCRIPT_LOCAL" ]; then
-        echo "Using local start_rust_staging.sh: $STAGING_SCRIPT_LOCAL"
-        cp "$STAGING_SCRIPT_LOCAL" ~/rust_staging/start_rust_staging.sh
+    RUST_SCRIPT_URL="https://raw.githubusercontent.com/phatblinkie/rust_istaller/main/bin/start_rust_staging.sh"
+    RUST_SCRIPT_LOCAL="./bin/start_rust_staging.sh" # Update for disconnected env
+    if [ -f "$RUST_SCRIPT_LOCAL" ]; then
+        echo "Using local start_rust_staging.sh: $RUST_SCRIPT_LOCAL"
+        cp "$RUST_SCRIPT_LOCAL" ~/rust_staging/start_rust_staging.sh
     else
-        if ! wget -q -O ~/rust_staging/start_rust_staging.sh "$STAGING_SCRIPT_URL"; then
-            echo -e "\nERROR: Failed to download start_rust_staging.sh. Provide $STAGING_SCRIPT_LOCAL in disconnected environment.\n"
+        if ! wget -q -O ~/rust_staging/start_rust_staging.sh "$RUST_SCRIPT_URL"; then
+            echo -e "\nERROR: Failed to download start_rust_staging.sh. Provide $RUST_SCRIPT_LOCAL in disconnected environment.\n"
             return 1
         fi
     fi
-    sed -i "s/USERNAME/$USER/" ~/.config/systemd/user/rust-staging.service
     chmod 0755 ~/rust_staging/start_rust_staging.sh
     # Set environment variables for systemd user session
     export XDG_RUNTIME_DIR=/run/user/$(id -u)
     export DBUS_SESSION_BUS_ADDRESS=unix:path=${XDG_RUNTIME_DIR}/bus
 
-    echo "export XDG_RUNTIME_DIR=/run/user/$(id -u)" >> ~/.profile
-    echo "export DBUS_SESSION_BUS_ADDRESS=unix:path=${XDG_RUNTIME_DIR}/bus" >> ~/.profile
 
     #istall rustedit.dll
     echo installing rustedit.dll
-    curl --output ~/rust_staging/RustDedicated_Data/Managed/Oxide.Ext.RustEdit.dll "https://github.com/k1lly0u/Oxide.Ext.RustEdit/raw/refs/heads/master/Oxide.Ext.RustEdit.dll"
+    curl -o ~/rust_staging/RustDedicated_Data/Managed/Oxide.Ext.RustEdit.dll "https://github.com/k1lly0u/Oxide.Ext.RustEdit/raw/refs/heads/master/Oxide.Ext.RustEdit.dll"
 
     #install Discord dlls
     echo installing discord extension
-    curl --output ~/rust_staging/RustDedicated_Data/Managed/Oxide.Ext.Discord.dll "https://umod.org/extensions/discord/download"
+    curl -o ~/rust_staging/RustDedicated_Data/Managed/Oxide.Ext.Discord.dll "https://umod.org/extensions/discord/download"
 
-
-    #fix fucking steamcmd being a pod
+    #fix fucking steamcmd being a pos
     mkdir -p  ~/.steam/sdk64/
     ln -s ~/rust_staging/RustDedicated_Data/Plugins/x86_64/steamclient.so ~/.steam/sdk64/steamclient.so
 
@@ -476,11 +499,7 @@ function install_rust_staging() {
     echo -e "systemctl --user start|status|stop rust-staging"
     echo
     echo -e "To see logs in real time, use journalctl --user -f -u rust-staging"
-    echo
-    echo
-    echo
-    echo -e "IMPORTANT! you will need to relogin for the systemctl --user to work properly"
-    echo -e "if you dont want to relogin, type '. ~/.profile' to load the settings"
+
 }
 
 
@@ -528,7 +547,7 @@ function install_oxide_staging() {
         fi
     fi
     unzip -o oxide.zip
-    echo "Oxide update completed"
+    echo "Oxide staging update completed"
     cd $OLDPWD
 }
 
