@@ -34,7 +34,8 @@ function run_rust_custom_map() {
     echo -e "$SERVERAUTO_CFG" > ~/rust_main/server/jan1/cfg/server.cfg
     echo -e "$USERS_CFG" > ~/rust_main/server/jan1/cfg/users.cfg
     echo "Starting Rust server (custom map)"
-    update_oxide
+    #lets not update oxide each restart, let the user do this with the installer menu
+    #update_oxide
     exec ./RustDedicated -batchmode -nographics \
         +server.ip "$IP" \
         +server.port "$GAMEPORT" \
@@ -87,7 +88,8 @@ function run_rust_standard_map() {
     echo -e "$SERVERAUTO_CFG" > ~/rust_main/server/jan1/cfg/server.cfg
     echo -e "$USERS_CFG" > ~/rust_main/server/jan1/cfg/users.cfg
     echo "Starting Rust server (standard map)"
-    update_oxide
+    #lets not update oxide each restart, let the user do this with the installer menu
+    #update_oxide
     exec ./RustDedicated -batchmode -nographics \
         +server.ip "$IP" \
         +server.port "$GAMEPORT" \
