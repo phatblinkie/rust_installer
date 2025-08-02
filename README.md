@@ -15,7 +15,8 @@ The `rust_installer` script automates the installation and configuration of a Ru
 - Creates user-level systemd services (`rust-main.service`, `rust-staging.service`) for easy server management.
 - Generates configuration files (`rust-main-settings.conf`, `rust-staging-settings.conf`) in `~/rust_main/` or `~/rust_staging/`.
 - Configures the firewall (`ufw` for Ubuntu, `firewalld` for RHEL 9) using ports defined in configuration files above. (edit them first)
-- Supports disconnected environments with local file paths for downloads.  you can git clone, or run as a single command "wget -q -O - https://raw.githubusercontent.com/phatblinkie/rust_installer/main/install_or_update_rust.sh | bash"
+- Supports disconnected environments with local file paths for downloads.  you can git clone, or run as a single command 
+```bash"wget -q -O - https://raw.githubusercontent.com/phatblinkie/rust_installer/main/install_or_update_rust.sh | bash"```
 
 ## Installation
 
