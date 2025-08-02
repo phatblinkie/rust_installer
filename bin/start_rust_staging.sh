@@ -4,7 +4,7 @@ cd ~/rust_staging/ || { echo "Failed to change to ~/rust_staging"; exit 1; }
 
 function update_oxide() {
     cd ~/rust_staging/ || { echo "Failed to change to ~/rust_staging"; exit 1; }
-    wget -O oxide.zip https://github.com/OxideMod/Oxide.Rust/releases/latest/download/Oxide.Rust-linux.zip
+    wget -O oxide.zip https://downloads.oxidemod.com/artifacts/Oxide.Rust/staging/Oxide.Rust-linux.zip
     if [ $? -ne 0 ]; then
         echo "Failed to download Oxide"
         exit 1

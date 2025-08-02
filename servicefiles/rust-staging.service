@@ -4,7 +4,7 @@ Description=Rust Staging Server
 [Service]
 Type=simple
 RestartSec=30s
-ExecStart=/home/rust/rust_staging/start_rust_staging.sh
+ExecStart=HOMEPATH/rust_staging/start_rust_staging.sh
 Restart=always
 RestartForceExitStatus=1
 SuccessExitStatus=0

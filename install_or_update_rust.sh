@@ -271,6 +271,11 @@ function install_rust() {
             echo -e "\nERROR: Failed to download rust-main.service. Provide $RUST_SERVICE_LOCAL in disconnected environment.\n"
             return 1
         fi
+	#fix the path to the local user
+	if ! sed -i  "s#HOMEPATH#$HOME#g" ~/.config/systemd/user/rust-main.service; then
+	    echo -e "\nERROR: file ~/.config/systemd/user/rust-main.service may contain invalid path, unable to modify"
+	    return 1
+	fi
     fi
     if [ -f ~/rust_main/rust-main-settings.conf ]; then
         echo "Found existing configuration file, skipping overwrite"
@@ -285,6 +290,13 @@ function install_rust() {
                 echo -e "\nERROR: Failed to download rust-main-settings.conf. Provide $RUST_CONFIG_LOCAL in disconnected environment.\n"
                 return 1
             fi
+	    
+            #fix the path to the local user
+            if ! sed -i  "s#HOMEPATH#$HOME#g" ~/.config/systemd/user/rust-main.service; then
+                echo -e "\nERROR: file ~/.config/systemd/user/rust-main.service may contain invalid path, unable to modify"
+                return 1
+            fi
+
         fi
     fi
 
@@ -372,6 +384,11 @@ function install_rust_staging() {
             echo -e "\nERROR: Failed to download rust-staging.service. Provide $STAGING_SERVICE_LOCAL in disconnected environment.\n"
             return 1
         fi
+        #fix the path to the local user
+        if ! sed -i  "s#HOMEPATH#$HOME#g" ~/.config/systemd/user/rust-staging.service; then
+            echo -e "\nERROR: file ~/.config/systemd/user/rust-staging.service may contain invalid path, unable to modify"
+            return 1
+        fi
     fi
     if [ -f ~/rust_staging/rust-staging-settings.conf ]; then
         echo "Found existing configuration file, skipping overwrite"
@@ -386,6 +403,11 @@ function install_rust_staging() {
                 echo -e "\nERROR: Failed to download rust-staging-settings.conf. Provide $STAGING_CONFIG_LOCAL in disconnected environment.\n"
                 return 1
             fi
+           #fix the path to the local user
+           if ! sed -i  "s#HOMEPATH#$HOME#g" ~/.config/systemd/user/rust-staging.service; then
+               echo -e "\nERROR: file ~/.config/systemd/user/rust-staging.service may contain invalid path, unable to modify"
+               return 1
+           fi
         fi
     fi
 

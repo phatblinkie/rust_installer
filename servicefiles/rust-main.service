@@ -4,7 +4,7 @@ Description=Rust Server
 [Service]
 Type=simple
 RestartSec=30s
-ExecStart=/home/rust/rust_main/start_rust_main.sh
+ExecStart=HOMEPATH/rust_main/start_rust_main.sh
 Restart=always
 RestartForceExitStatus=1
 SuccessExitStatus=0
