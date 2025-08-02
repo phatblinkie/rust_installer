@@ -438,7 +438,7 @@ function install_rust_staging() {
     fi
     #install start script
 
-    RUST_SCRIPT_URL="https://raw.githubusercontent.com/phatblinkie/rust_istaller/main/bin/start_rust_staging.sh"
+    RUST_SCRIPT_URL="https://raw.githubusercontent.com/phatblinkie/rust_installer/main/bin/start_rust_staging.sh"
     RUST_SCRIPT_LOCAL="./bin/start_rust_staging.sh" # Update for disconnected env
     if [ -f "$RUST_SCRIPT_LOCAL" ]; then
         echo "Using local start_rust_staging.sh: $RUST_SCRIPT_LOCAL"
