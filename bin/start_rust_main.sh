@@ -85,9 +85,6 @@ function run_rust_custom_map() {
         +server.motd "$SERVER_MOTD" \
         +server.levelurl "$SERVER_LEVELURL" \
         +server.writecfg
-    if [ $PERFORM_BACKUPS -eq 1 ]; then
-        make_backup
-    fi
 }
 
 function run_rust_standard_map() {
@@ -138,20 +135,21 @@ function run_rust_standard_map() {
         +server.gamemode "$SERVER_GAMEMODE" \
         +server.motd "$SERVER_MOTD" \
         +server.writecfg
-    if [ $PERFORM_BACKUPS -eq 1 ]; then
-        make_backup
-    fi
 }
 
 echo "Script started at $(date)"
 if [[ -z $SERVER_LEVELURL ]]; then
-
     update_rust_main
     update_oxide
     run_rust_standard_map
+    if [ $PERFORM_BACKUPS -eq 1 ]; then
+        make_backup
+    fi
 else
-
     update_rust_main
     update_oxide
     run_rust_custom_map
+    if [ $PERFORM_BACKUPS -eq 1 ]; then
+        make_backup
+    fi
 fi

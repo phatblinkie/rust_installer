@@ -28,12 +28,12 @@ function update_oxide() {
 function make_backup() {
     cd ~/rust_staging/ || { echo "Failed to change to ~/rust_staging"; exit 1; }
     echo "Creating backup at $(date)"
-    mkdir -p ~/backups/
-    rsync -avh --progress server ~/backups/"$(date +'%B-%d_%H%M%p')/"
-    rsync -avh --progress oxide ~/backups/"$(date +'%B-%d_%H%M%p')/"
+    mkdir -p ~/backups_staging/
+    rsync -avh --progress server ~/backups_staging/"$(date +'%B-%d_%H%M%p')/"
+    rsync -avh --progress oxide ~/backups_staging/"$(date +'%B-%d_%H%M%p')/"
     echo "Deleting backups older than $DAYS_OF_BACKUPS days"
-    find ~/backups/ -type f -mtime +"$DAYS_OF_BACKUPS" -delete -print
-    find ~/backups/ -type d -empty -delete -print
+    find ~/backups_staging/ -type f -mtime +"$DAYS_OF_BACKUPS" -delete -print
+    find ~/backups_staging/ -type d -empty -delete -print
 }
 
 function run_rust_custom_map() {
@@ -85,9 +85,6 @@ function run_rust_custom_map() {
         +server.motd "$SERVER_MOTD" \
         +server.levelurl "$SERVER_LEVELURL" \
         +server.writecfg
-    if [ $PERFORM_BACKUPS -eq 1 ]; then
-        make_backup
-    fi
 }
 
 function run_rust_standard_map() {
@@ -138,9 +135,6 @@ function run_rust_standard_map() {
         +server.gamemode "$SERVER_GAMEMODE" \
         +server.motd "$SERVER_MOTD" \
         +server.writecfg
-    if [ $PERFORM_BACKUPS -eq 1 ]; then
-        make_backup
-    fi
 }
 
 echo "Script started at $(date)"
@@ -148,8 +142,14 @@ if [[ -z $SERVER_LEVELURL ]]; then
     update_rust_staging
     update_oxide
     run_rust_standard_map
+    if [ $PERFORM_BACKUPS -eq 1 ]; then
+        make_backup
+    fi
 else
     update_rust_staging
     update_oxide
     run_rust_custom_map
+    if [ $PERFORM_BACKUPS -eq 1 ]; then
+        make_backup
+    fi
 fi
