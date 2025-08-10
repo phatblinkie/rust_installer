@@ -2,6 +2,13 @@
 cd ~/rust_staging/ || { echo "Failed to change to ~/rust_staging"; exit 1; }
 . rust-staging-settings.conf
 
+
+function update_rust_staging() {
+    ~/Steam/steamcmd.sh +force_install_dir ~/rust_staging/ +login anonymous +app_update 258550 -beta staging validate +exit
+    #do it again, sometimes it does not update properly,
+    ~/Steam/steamcmd.sh +force_install_dir ~/rust_staging/ +login anonymous +app_update 258550 -beta staging validate +exit
+}
+
 function update_oxide() {
     cd ~/rust_staging/ || { echo "Failed to change to ~/rust_staging"; exit 1; }
     wget -O oxide.zip https://downloads.oxidemod.com/artifacts/Oxide.Rust/staging/Oxide.Rust-linux.zip
@@ -138,7 +145,11 @@ function run_rust_standard_map() {
 
 echo "Script started at $(date)"
 if [[ -z $SERVER_LEVELURL ]]; then
+    update_rust_staging
+    update_oxide
     run_rust_standard_map
 else
+    update_rust_staging
+    update_oxide
     run_rust_custom_map
 fi

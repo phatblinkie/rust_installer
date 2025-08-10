@@ -2,6 +2,13 @@
 cd ~/rust_main/ || { echo "Failed to change to ~/rust_main"; exit 1; }
 . rust-main-settings.conf
 
+
+function update_rust_main() {
+    ~/Steam/steamcmd.sh +force_install_dir ~/rust_main/ +login anonymous +app_update 258550 validate +exit
+    #do it again, sometimes it does not update properly, 
+    ~/Steam/steamcmd.sh +force_install_dir ~/rust_main/ +login anonymous +app_update 258550 validate +exit
+}
+
 function update_oxide() {
     cd ~/rust_main/ || { echo "Failed to change to ~/rust_main"; exit 1; }
     wget -O oxide.zip https://github.com/OxideMod/Oxide.Rust/releases/latest/download/Oxide.Rust-linux.zip
@@ -138,7 +145,13 @@ function run_rust_standard_map() {
 
 echo "Script started at $(date)"
 if [[ -z $SERVER_LEVELURL ]]; then
+
+    update_rust_main
+    update_oxide
     run_rust_standard_map
 else
+
+    update_rust_main
+    update_oxide
     run_rust_custom_map
 fi
