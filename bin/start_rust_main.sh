@@ -139,17 +139,17 @@ function run_rust_standard_map() {
 
 echo "Script started at $(date)"
 if [[ -z $SERVER_LEVELURL ]]; then
+    if [ $PERFORM_BACKUPS -eq 1 ]; then
+        make_backup
+    fi
     update_rust_main
     update_oxide
     run_rust_standard_map
+else
     if [ $PERFORM_BACKUPS -eq 1 ]; then
         make_backup
     fi
-else
     update_rust_main
     update_oxide
     run_rust_custom_map
-    if [ $PERFORM_BACKUPS -eq 1 ]; then
-        make_backup
-    fi
 fi
