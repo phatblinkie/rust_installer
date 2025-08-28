@@ -333,7 +333,7 @@ function install_rust() {
 
     #istall rustedit.dll
     echo installing rustedit.dll
-    curl -o ~/rust_main/RustDedicated_Data/Managed/Oxide.Ext.RustEdit.dll "https://github.com/k1lly0u/Oxide.Ext.RustEdit/raw/refs/heads/master/Oxide.Ext.RustEdit.dll"
+    curl -o ~/rust_main/RustDedicated_Data/Managed/Oxide.Ext.RustEdit.dll "https://raw.githubusercontent.com/k1lly0u/Oxide.Ext.RustEdit/refs/heads/master/Oxide.Ext.RustEdit.dll"
 
     #install Discord dlls
     echo installing discord extension
