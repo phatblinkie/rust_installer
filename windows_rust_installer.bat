@@ -1,4 +1,4 @@
-@echo on
+@echo off
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 :: Define the root server directory (no spaces)
@@ -176,7 +176,7 @@ if %USE_CUSTOM_MAP_URL%=="true" (
     set COMMAND=%COMMAND% +server.levelurl %SERVER_LEVELURL%
 )
 echo Running: %COMMAND%
-pause
+timeout /t 10
 start /wait %COMMAND% >> "%LOGFILE%" 2>&1
 echo Server stopped. Restarting in 10 seconds...
 timeout /t 10 /nobreak >nul
