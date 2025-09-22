@@ -25,7 +25,7 @@ SET "ROOT_DIR=C:\rustserver"
 
 :: -------------------------------
 :: Server configuration (raw values; DO NOT wrap these in quotes)
-SET "SERVER_LEVELURL=http://209.222.101.108/maps/testmapbeta.v2.map"
+SET "SERVER_LEVELURL=http://209.222.101.108/maps/proceduralmap.5000.51655761.259.v4.map"
 SET "USE_CUSTOM_MAP_URL=false"
 
 SET "SERVER_HOSTNAME=phats test server"
@@ -769,3 +769,4 @@ goto menu
 echo Exiting.
 ENDLOCAL
 exit /b 0
+
