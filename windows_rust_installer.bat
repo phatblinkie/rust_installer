@@ -2,8 +2,8 @@
 SETLOCAL EnableExtensions EnableDelayedExpansion
 
 :: ============================================================
-:: Rust Server Menu - vers: 1.4.0
-:: Windows 10+ native tools only (cmd, PowerShell, curl, robocopy, forfiles)
+:: Rust Server Menu - vers: 1.5.1
+:: Windows 10+ native tools only (cmd, curl, robocopy, forfiles)
 :: Tasks:
 ::  1) Install/Reinstall SteamCMD
 ::  2) Install/Update Rust (AppID 258550)
@@ -13,10 +13,11 @@ SETLOCAL EnableExtensions EnableDelayedExpansion
 ::  6) Install latest Chaoscode extension DLL
 ::  7) Force backup now
 ::  8) Stop Rust server (requests exit; blocks restart)
-::  9) Start Rust server (restart-on-exit loop; performs backup on exit)
+::  9) Start Rust server (restart-on-exit loop; writes users.cfg; backups on exit)
+::  C) Configure settings (edit and save to config.env)
 :: ============================================================
 
-SET "SCRIPT_VERSION=1.4.0"
+SET "SCRIPT_VERSION=1.5.1"
 
 :: -------------------------------
 :: Root install directory (no spaces recommended)
@@ -24,21 +25,22 @@ SET "ROOT_DIR=C:\rustserver"
 :: -------------------------------
 
 :: -------------------------------
-:: Server configuration (raw values; DO NOT wrap these in quotes)
-SET "SERVER_LEVELURL=http://209.222.101.108/maps/proceduralmap.5000.51655761.259.v4.map"
+:: Default configuration (can be overridden by %ROOT_DIR%\config.env)
+:: Store raw values; commands add quotes where needed
+SET "SERVER_LEVELURL=http://209.222.101.108/proceduralmap.5000.51655761.259.v4.map"
 SET "USE_CUSTOM_MAP_URL=false"
 
 SET "SERVER_HOSTNAME=phats test server"
-SET "SERVER_DESCRIPTION=Just learning"
-SET "SERVER_URL=https://foxxservers.com"
+SET "SERVER_DESCRIPTION=literally just learning"
+SET "SERVER_URL=http://foxxservers.com"
 SET "SERVER_HEADERIMAGE=https://i.imgur.com/pR9YljG.png"
 SET "SERVER_TAGS=biweekly,NA,pve,z"
 
-:: Public and private IPs
+:: IPs
 SET "PUBLIC_IP=69.39.37.233"
 SET "PRIVATE_IP=192.168.11.57"
 
-:: Admins
+:: Admins (can be blank)
 SET "OWNER_STEAM_ID=76561199753344979"
 SET "MODERATOR_STEAM_ID="
 
@@ -55,7 +57,10 @@ SET "MAX_PLAYERS=10"
 SET "RCONPASSWORD=testicles"
 SET "SERVER_SAVE_INTERVAL=180"
 
-:: Game log file name (written in the server folder)
+:: Identity name (affects users.cfg path)
+SET "IDENTITY_NAME=mapfiles"
+
+:: Game log file name (written under ServerPath)
 SET "GAME_LOGFILE=logfile.txt"
 :: -------------------------------
 
@@ -69,11 +74,10 @@ SET "SteamCmdPath=%ROOT_DIR%\steamcmd"
 SET "SteamCmdExe=%SteamCmdPath%\steamcmd.exe"
 SET "SteamCmdZip=%SteamCmdPath%\steamcmd.zip"
 SET "ServerPath=%ROOT_DIR%\server"
-SET "OxideZipPath=%ServerPath%\Oxide.Rust.zip"
 
 :: Downloads
 SET "STEAMCMD_URL=https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"
-SET "OXIDE_URL=https://umod.org/games/rust/download"
+SET "OXIDE_URL=https://uMod.org/games/rust/download"
 SET "RUSTEDIT_URL=https://raw.githubusercontent.com/k1lly0u/Oxide.Ext.RustEdit/refs/heads/master/Oxide.Ext.RustEdit.dll"
 SET "DISCORD_URL=https://umod.org/extensions/discord/download"
 SET "CHAOS_URL=https://oxide.chaoscode.io/Oxide.Ext.Chaos.dll"
@@ -86,6 +90,12 @@ SET "CHAOS_DEST=%MANAGED_DIR%\Oxide.Ext.Chaos.dll"
 
 :: Stop flag (prevents restart in loop)
 SET "STOP_FLAG=%ROOT_DIR%\stop.flag"
+
+:: -------------------------------
+:: Load overrides from config.env if present
+SET "CONFIG_FILE=%ROOT_DIR%\config.env"
+if exist "%CONFIG_FILE%" call :load_env "%CONFIG_FILE%"
+:: -------------------------------
 
 :: Copy this script to ROOT_DIR for convenience (once)
 IF NOT EXIST "%ROOT_DIR%" (
@@ -107,6 +117,7 @@ echo Rust Server Menu - vers: %SCRIPT_VERSION%
 echo Root: %ROOT_DIR%
 echo Server: %ServerPath%
 echo Game log: %ServerPath%\%GAME_LOGFILE%
+echo Config file: %CONFIG_FILE%
 echo ===============================================
 echo.
 echo  1) Install/Reinstall SteamCMD
@@ -120,6 +131,7 @@ echo  8) Stop Rust server (requests exit; blocks restart)
 echo  9) Start Rust server (restart-on-exit loop)
 echo -----------------------------------------------
 echo  A) Show current config summary
+echo  C) Configure settings (edit and save)
 echo  R) Reload menu
 echo  E) Exit
 echo.
@@ -136,6 +148,7 @@ if /I "%choice%"=="7" goto task_force_backup
 if /I "%choice%"=="8" goto task_stop_server
 if /I "%choice%"=="9" goto task_start_server
 if /I "%choice%"=="A" goto show_config
+if /I "%choice%"=="C" goto task_edit_config
 if /I "%choice%"=="R" goto menu
 if /I "%choice%"=="E" goto end
 
@@ -172,6 +185,7 @@ echo SERVER_WORLDSIZE     = "%SERVER_WORLDSIZE%"
 echo MAX_PLAYERS          = "%MAX_PLAYERS%"
 echo RCONPASSWORD         = "%RCONPASSWORD%"
 echo SERVER_SAVE_INT      = "%SERVER_SAVE_INTERVAL% seconds"
+echo IDENTITY_NAME        = "%IDENTITY_NAME%"
 echo MANAGED_DIR          = "%MANAGED_DIR%"
 echo RUSTEDIT_DEST        = "%RUSTEDIT_DEST%"
 echo DISCORD_DEST         = "%DISCORD_DEST%"
@@ -266,14 +280,14 @@ if not exist "%ServerPath%\RustDedicated.exe" (
 )
 
 echo Downloading Oxide from %OXIDE_URL%
-call :download "%OXIDE_URL%" "%OxideZipPath%"
+call :download "%OXIDE_URL%" "%ServerPath%\Oxide.Rust.zip"
 if errorlevel 1 goto fail_step
 
 echo Extracting Oxide into "%ServerPath%" ...
-call :extract "%OxideZipPath%" "%ServerPath%"
+call :extract "%ServerPath%\Oxide.Rust.zip" "%ServerPath%"
 if errorlevel 1 goto fail_step
 
-del /f /q "%OxideZipPath%" 2>nul
+del /f /q "%ServerPath%\Oxide.Rust.zip" 2>nul
 
 echo.
 echo Oxide installed/updated successfully.
@@ -409,7 +423,6 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo Requesting process to exit gracefully...
-:: No /F (force) here — we want a clean shutdown
 taskkill /IM RustDedicated.exe >nul 2>&1
 
 echo Waiting up to 60 seconds for exit...
@@ -426,12 +439,12 @@ goto pause_return
 
 :server_stopped_msg
 echo.
-echo Server process has exited. A backup will run automatically if it was launched via option 9.
-echo Since restart is blocked, the loop will return to the menu after backup completes.
+echo Server process has exited. If it was started via option 9, a backup ran on exit.
+echo Since restart is blocked, the loop will return to the menu instead of restarting.
 goto pause_return
 
 :: ------------------------------------------------------------
-:: Step 9: Start server (restart-on-exit loop) — robust quoting, with backups on exit, honors stop flag
+:: Step 9: Start server (restart-on-exit loop) — writes users.cfg, backups on exit, honors stop flag
 :task_start_server
 cls
 echo [9/9] Start Rust Server
@@ -459,6 +472,30 @@ timeout /t 10 /nobreak >nul
 
 :start_server_loop
 echo.
+echo ===== Preparing users.cfg (upsert ownerid/moderatorid) =====
+
+:: Pure cmd upsert (no PowerShell)
+set "USERS_CFG_DIR=%ServerPath%\server\%IDENTITY_NAME%\cfg"
+set "USERS_CFG=%USERS_CFG_DIR%\users.cfg"
+set "USERS_TMP=%USERS_CFG%.tmp"
+
+if not exist "%USERS_CFG_DIR%" mkdir "%USERS_CFG_DIR%" >nul 2>&1
+
+if exist "%USERS_CFG%" (
+    type "%USERS_CFG%" | findstr /R /V /C:"^ *ownerid [0-9]" /C:"^ *moderatorid [0-9]" > "%USERS_TMP%"
+) else (
+    type nul > "%USERS_TMP%"
+)
+
+if defined OWNER_STEAM_ID (
+    >>"%USERS_TMP%" echo ownerid %OWNER_STEAM_ID% "unnamed" "no reason"
+)
+if defined MODERATOR_STEAM_ID (
+    >>"%USERS_TMP%" echo moderatorid %MODERATOR_STEAM_ID% "unnamed" "no reason"
+)
+
+move /Y "%USERS_TMP%" "%USERS_CFG%" >nul
+
 echo ===== Launching RustDedicated.exe =====
 
 set "CMD_PATH=%ServerPath%\RustDedicated.exe"
@@ -473,7 +510,7 @@ echo "%CMD_PATH%" -batchmode ^
  +server.description "%SERVER_DESCRIPTION%" ^
  +server.url "%SERVER_URL%" ^
  +server.headerimage "%SERVER_HEADERIMAGE%" ^
- +server.identity "mapfiles" ^
+ +server.identity "%IDENTITY_NAME%" ^
  +rcon.port %RCONPORT% ^
  +server.port %GAMEPORT% ^
  +server.saveinterval %SERVER_SAVE_INTERVAL% ^
@@ -482,12 +519,10 @@ echo "%CMD_PATH%" -batchmode ^
  +app.listenip %PRIVATE_IP% ^
  +server.tags "%SERVER_TAGS%" ^
  +rcon.password "%RCONPASSWORD%" ^
- +global.ownerid %OWNER_STEAM_ID% ^
- +global.moderatorid %MODERATOR_STEAM_ID% ^
  +rcon.web 1 ^
  +queryport %QUERYPORT% ^
  +logfile "%GAME_LOGFILE%"
-if /I "%USE_CUSTOM_MAP_URL%"=="true" echo +server.levelurl ENABLED
+if /I "%USE_CUSTOM_MAP_URL%"=="true" echo +server.levelurl "%SERVER_LEVELURL%"
 
 :: Execute (branch to include optional levelurl cleanly)
 if /I "%USE_CUSTOM_MAP_URL%"=="true" (
@@ -500,7 +535,7 @@ if /I "%USE_CUSTOM_MAP_URL%"=="true" (
         +server.description "%SERVER_DESCRIPTION%" ^
         +server.url "%SERVER_URL%" ^
         +server.headerimage "%SERVER_HEADERIMAGE%" ^
-        +server.identity "mapfiles" ^
+        +server.identity "%IDENTITY_NAME%" ^
         +rcon.port %RCONPORT% ^
         +server.port %GAMEPORT% ^
         +server.saveinterval %SERVER_SAVE_INTERVAL% ^
@@ -509,8 +544,6 @@ if /I "%USE_CUSTOM_MAP_URL%"=="true" (
         +app.listenip %PRIVATE_IP% ^
         +server.tags "%SERVER_TAGS%" ^
         +rcon.password "%RCONPASSWORD%" ^
-        +global.ownerid %OWNER_STEAM_ID% ^
-        +global.moderatorid %MODERATOR_STEAM_ID% ^
         +rcon.web 1 ^
         +queryport %QUERYPORT% ^
         +logfile "%GAME_LOGFILE%" ^
@@ -525,7 +558,7 @@ if /I "%USE_CUSTOM_MAP_URL%"=="true" (
         +server.description "%SERVER_DESCRIPTION%" ^
         +server.url "%SERVER_URL%" ^
         +server.headerimage "%SERVER_HEADERIMAGE%" ^
-        +server.identity "mapfiles" ^
+        +server.identity "%IDENTITY_NAME%" ^
         +rcon.port %RCONPORT% ^
         +server.port %GAMEPORT% ^
         +server.saveinterval %SERVER_SAVE_INTERVAL% ^
@@ -534,8 +567,6 @@ if /I "%USE_CUSTOM_MAP_URL%"=="true" (
         +app.listenip %PRIVATE_IP% ^
         +server.tags "%SERVER_TAGS%" ^
         +rcon.password "%RCONPASSWORD%" ^
-        +global.ownerid %OWNER_STEAM_ID% ^
-        +global.moderatorid %MODERATOR_STEAM_ID% ^
         +rcon.web 1 ^
         +queryport %QUERYPORT% ^
         +logfile "%GAME_LOGFILE%"
@@ -569,7 +600,192 @@ endlocal
 goto menu
 
 :: ------------------------------------------------------------
+:: Configure settings (sectioned, spaced, and readable)
+:task_edit_config
+cls
+echo [C] Configure settings
+echo This will save to: %CONFIG_FILE%
+echo Leave blank to keep current value. Avoid %% and ^^! in values here.
+echo.
+
+rem ===== Section 1: Map source =====
+call :section_header "Map Source"
+call :prompt_update USE_CUSTOM_MAP_URL  "Use custom map URL (true/false)"
+call :prompt_update SERVER_LEVELURL     "Server level URL"
+call :continue_prompt
+
+rem ===== Section 2: Identity =====
+call :section_header "Server Identity"
+call :prompt_update SERVER_HOSTNAME     "Server hostname"
+call :prompt_update SERVER_DESCRIPTION  "Server description"
+call :prompt_update SERVER_URL          "Server URL"
+call :continue_prompt
+
+rem ===== Section 3: Networking =====
+call :section_header "Networking"
+call :prompt_update PUBLIC_IP           "Public IP"
+call :prompt_update PRIVATE_IP          "Private IP"
+call :continue_prompt
+
+rem ===== Section 4: Admins =====
+call :section_header "Admins"
+call :prompt_update OWNER_STEAM_ID      "Owner SteamID64 (blank to omit)"
+call :prompt_update MODERATOR_STEAM_ID  "Moderator SteamID64 (blank to omit)"
+call :continue_prompt
+
+rem ===== Section 5: Ports =====
+call :section_header "Ports"
+call :prompt_update GAMEPORT            "Game port"
+call :prompt_update RUSTPLUSPORT        "Rust+ port"
+call :prompt_update QUERYPORT           "Query port"
+call :prompt_update RCONPORT            "RCON port"
+call :continue_prompt
+
+rem ===== Section 6: World =====
+call :section_header "World Settings"
+call :prompt_update SERVER_SEED         "World seed"
+call :prompt_update SERVER_WORLDSIZE    "World size"
+call :prompt_update MAX_PLAYERS         "Max players"
+call :prompt_update SERVER_SAVE_INTERVAL "Save interval (seconds)"
+call :continue_prompt
+
+rem ===== Section 7: Media/Tags/Identity =====
+call :section_header "Media, Tags, Logs, Backups"
+call :prompt_update SERVER_HEADERIMAGE  "Server header image URL"
+call :prompt_update SERVER_TAGS         "Server tags (comma-separated)"
+call :prompt_update IDENTITY_NAME       "Identity name"
+call :prompt_update GAME_LOGFILE        "Game log filename"
+call :prompt_update BACKUP_RETENTION_DAYS "Backup retention (days)"
+
+echo.
+echo ------------------------------------------------------------
+echo Review complete.
+set "save="
+set /p "save=Save changes to %CONFIG_FILE% now? [Y/n]: "
+if /I "%save%"=="n" (
+    echo Not saved to file. Changes remain in memory for this run.
+    echo.
+    call :press_any_key
+    goto menu
+)
+
+echo.
+echo Saving config...
+call :save_config "%CONFIG_FILE%"
+if errorlevel 1 (
+    echo ERROR: Failed to save config.
+) else (
+    echo Config saved. It will load automatically next time.
+)
+echo.
+call :press_any_key
+goto menu
+
+:: One-at-a-time prompt with generous spacing.
+:: %1 = VAR NAME, %2 = Prompt label
+:prompt_update
+set "varname=%~1"
+set "label=%~2"
+setlocal EnableDelayedExpansion
+set "current=!%varname%!"
+if "!current!"=="" set "current=<empty>"
+echo.
+echo ============================================================
+echo %label%
+echo.
+echo   Current: !current!
+echo.
+set "ans="
+set /p "ans=   New value (blank = keep): "
+if defined ans (
+    for /f "delims=" %%A in ("!ans!") do (
+        endlocal
+        set "%varname%=%%A"
+        goto :eof_prompt_update
+    )
+) else (
+    endlocal
+    goto :eof_prompt_update
+)
+:eof_prompt_update
+exit /b 0
+
+:: Nicely formatted section header
+:section_header
+cls
+echo.
+echo ============================================================
+echo   Configure: %~1
+echo ============================================================
+echo.
+exit /b 0
+
+:: Soft pause between sections
+:continue_prompt
+echo.
+set "___next="
+set /p "___next=Press Enter to continue to the next section..."
+echo.
+exit /b 0
+
+:: ------------------------------------------------------------
 :: Utilities
+
+:load_env
+:: %1 = config file path
+for /f "usebackq eol=# tokens=1* delims==" %%K in ("%~1") do (
+    if not "%%K"=="" (
+        set "%%K=%%L"
+    )
+)
+exit /b 0
+
+:save_config
+:: %1 = config file path
+set "cfg=%~1"
+> "%cfg%" echo # Rust Server Menu config.env (generated)
+>>"%cfg%" echo # Edit carefully; one KEY=VALUE per line. Blank values are allowed.
+>>"%cfg%" echo # Avoid using %% and ^^! in values unless you know how cmd expansion works.
+call :write_kv "%cfg%" USE_CUSTOM_MAP_URL
+call :write_kv "%cfg%" SERVER_LEVELURL
+call :write_kv "%cfg%" SERVER_HOSTNAME
+call :write_kv "%cfg%" SERVER_DESCRIPTION
+call :write_kv "%cfg%" SERVER_URL
+call :write_kv "%cfg%" SERVER_HEADERIMAGE
+call :write_kv "%cfg%" SERVER_TAGS
+call :write_kv "%cfg%" PUBLIC_IP
+call :write_kv "%cfg%" PRIVATE_IP
+call :write_kv "%cfg%" OWNER_STEAM_ID
+call :write_kv "%cfg%" MODERATOR_STEAM_ID
+call :write_kv "%cfg%" GAMEPORT
+call :write_kv "%cfg%" RUSTPLUSPORT
+call :write_kv "%cfg%" QUERYPORT
+call :write_kv "%cfg%" RCONPORT
+call :write_kv "%cfg%" SERVER_SEED
+call :write_kv "%cfg%" SERVER_WORLDSIZE
+call :write_kv "%cfg%" MAX_PLAYERS
+call :write_kv "%cfg%" RCONPASSWORD
+call :write_kv "%cfg%" SERVER_SAVE_INTERVAL
+call :write_kv "%cfg%" IDENTITY_NAME
+call :write_kv "%cfg%" GAME_LOGFILE
+call :write_kv "%cfg%" BACKUP_RETENTION_DAYS
+exit /b 0
+
+:write_kv
+:: %1 = file, %2 = var name
+set "cfgfile=%~1"
+set "k=%~2"
+setlocal EnableDelayedExpansion
+set "v=!%k%!"
+:: Escape special cmd redirection/operators for safe echo (not handling %% on purpose)
+set "v=!v:^=^^!"
+set "v=!v:&=^&!"
+set "v=!v:|=^|!"
+set "v=!v:>=^>!"
+set "v=!v:<=^<!"
+>>"%cfgfile%" echo %k%=!v!
+endlocal
+exit /b 0
 
 :ensure_dir
 :: %1 = path
@@ -705,6 +921,7 @@ call :ensure_dir "%BACKUP_DIR%"
 if errorlevel 1 exit /b 1
 
 for /f %%I in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"') do set "STAMP=%%I"
+set "BK=%BACKUP_RETENTION_DAYS%"
 set "BK=%BACKUP_DIR%\%STAMP%"
 set "BK_OX=%BK%\oxide"
 set "BK_SV=%BK%\server"
@@ -743,7 +960,7 @@ exit /b 0
 :: Deletes backup folders older than BACKUP_RETENTION_DAYS
 if not exist "%BACKUP_DIR%" exit /b 0
 echo Pruning backups older than %BACKUP_RETENTION_DAYS% days:
-forfiles /P "%BACKUP_DIR%" /D -%BACKUP_RETENTION_DAYS% /C "cmd /c if @isdir==TRUE echo @file & rmdir /S /Q @path"
+forfiles /P "%BACKUP_DIR%" /D -%BACKUP_RETENTION_DAYS% /C "cmd /c if @isdir==TRUE echo @file ^& rmdir /S /Q @path"
 exit /b 0
 
 :press_any_key
@@ -769,4 +986,3 @@ goto menu
 echo Exiting.
 ENDLOCAL
 exit /b 0
-
