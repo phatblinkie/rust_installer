@@ -44,10 +44,8 @@ function run_rust_custom_map() {
     #lets not update oxide each restart, let the user do this with the installer menu
     #update_oxide
     exec ./RustDedicated -batchmode -nographics \
-        +server.ip "$IP" \
         +server.port "$GAMEPORT" \
         +server.queryport "$QUERYPORT" \
-        +rcon.ip "$IP" \
         +rcon.web "1" \
         +rcon.port "$RCONPORT" \
         +rcon.password "$RCONPASS" \
@@ -58,7 +56,6 @@ function run_rust_custom_map() {
         +server.seed "$MAPSEED" \
         +server.saveinterval 180 \
         +app.port "$RUSTPLUSPORT" \
-        +app.listenip "$IP" \
         +app.publicip "$IP" \
         +server.secure "true" \
         +server.tickrate "30" \
@@ -95,10 +92,8 @@ function run_rust_standard_map() {
     #lets not update oxide each restart, let the user do this with the installer menu
     #update_oxide
     exec ./RustDedicated -batchmode -nographics \
-        +server.ip "$IP" \
         +server.port "$GAMEPORT" \
         +server.queryport "$QUERYPORT" \
-        +rcon.ip "$IP" \
         +rcon.port "$RCONPORT" \
         +rcon.web "1" \
         +rcon.password "$RCONPASS" \
@@ -109,7 +104,6 @@ function run_rust_standard_map() {
         +server.seed "$MAPSEED" \
         +server.saveinterval 180 \
         +app.port "$RUSTPLUSPORT" \
-        +app.listenip "$IP" \
         +app.publicip "$IP" \
         +server.secure "true" \
         +server.tickrate "30" \
