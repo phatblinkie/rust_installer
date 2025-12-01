@@ -1,6 +1,7 @@
 #!/bin/bash
 cd ~/rust_staging/ || { echo "Failed to change to ~/rust_staging"; exit 1; }
 . rust-staging-settings.conf
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`dirname $0`/RustDedicated_Data/Plugins:`dirname $0`/RustDedicated_Data/Plugins/x86_64
 
 
 function update_rust_staging() {
