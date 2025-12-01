@@ -340,8 +340,8 @@ function install_rust() {
     curl -o ~/rust_main/RustDedicated_Data/Managed/Oxide.Ext.Discord.dll "https://umod.org/extensions/discord/download"
 
     #fix fucking steamcmd being a pos
-    mkdir -p  ~/.steam/sdk64/
-    ln -s ~/rust_main/RustDedicated_Data/Plugins/x86_64/steamclient.so ~/.steam/sdk64/steamclient.so
+    #mkdir -p  ~/.steam/sdk64/
+    #ln -s ~/rust_main/RustDedicated_Data/Plugins/x86_64/steamclient.so ~/.steam/sdk64/steamclient.so
 
     # Reload daemon
     systemctl --user daemon-reload
@@ -464,8 +464,8 @@ function install_rust_staging() {
     curl -o ~/rust_staging/RustDedicated_Data/Managed/Oxide.Ext.Discord.dll "https://umod.org/extensions/discord/download"
 
     #fix fucking steamcmd being a pos
-    mkdir -p  ~/.steam/sdk64/
-    ln -s ~/rust_staging/RustDedicated_Data/Plugins/x86_64/steamclient.so ~/.steam/sdk64/steamclient.so
+    #mkdir -p  ~/.steam/sdk64/
+    #ln -s ~/rust_staging/RustDedicated_Data/Plugins/x86_64/steamclient.so ~/.steam/sdk64/steamclient.so
 
     # Reload daemon
     systemctl --user daemon-reload
