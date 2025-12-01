@@ -1,6 +1,7 @@
 #!/bin/bash
 cd ~/rust_main/ || { echo "Failed to change to ~/rust_main"; exit 1; }
 . rust-main-settings.conf
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`dirname $0`/RustDedicated_Data/Plugins:`dirname $0`/RustDedicated_Data/Plugins/x86_64
 
 
 function update_rust_main() {
